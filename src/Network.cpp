@@ -1,10 +1,10 @@
 #include "Network.h"
   
-Network::Network(int in, int out, int hid, int lay)
+Network::Network(int in, int hid, int out, int lay)
 {
   numInputNodes = in;
-  numOutputNodes = out;
   numHiddenNodes = hid;
+  numOutputNodes = out;
   numHiddenLayers = lay;
   initNetwork();
 }

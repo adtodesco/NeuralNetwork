@@ -2,27 +2,49 @@
 
 Layer::Layer(int numNodes, int numPrevNodes)
 {
+  setNumNodes(numNodes);
+  setNumPrevNodes(numPrevNodes);
   for (int n = 0; n < numNodes; n++) {
-    Node newNode = Node(0.5);
+    Node newNode = Node(0);
     nodes.push_back(newNode);
   }
-  for (int p = 0; p < numPrevNodes; p++) {
+  for (int n = 0; n < numNodes; n++) {
     std::vector<Link> newVector;
     links.push_back(newVector);
-    for (int n = 0; n < numNodes; n++) {
-      Link newLink = Link(0.5);
-      links[p].push_back(newLink);
+    for (int p = 0; p < numPrevNodes; p++) {
+      Link newLink = Link(INITIALWEIGHT);
+      links[n].push_back(newLink);
     }
   }
 }
 
+float Layer::getWeightedInput(std::vector<float> inputs, std::vector<Link> weights) {
+  float sum = 0.0;
+  for (int pn = 0; pn < getNumPrevNodes(); pn++) {
+    std::cout << "Input: " << inputs[pn] << " Weight: " << weights[pn].getWeight() << '\n';
+    sum = sum + inputs[pn] * weights[pn].getWeight();
+  }
+  return sum;
+}
+
 std::vector<float> Layer::feedForward(std::vector<float> inputs) {
   // Update these nodes based on input nodes and return
-  std::cout << "Feed forward\n";
-  printNodes();
   printLinks();
+  std::vector<float> outputs;
+  // Set outputs to inputs if input layer
+  if (getNumPrevNodes() == 0) {
+    outputs = inputs;
+  }
+  else {
+    for (int n = 0; n < getNumNodes(); n++) { 
+      float weightedInput = getWeightedInput(inputs, links[n]);
+      nodes[n].setValue(weightedInput);
+      outputs.push_back(nodes[n].getOutput());
+      std::cout << "Weighted input for Node " << n << " = " << weightedInput << '\n';
+    }
+  }
   // Return outputed values from nodes
-  return inputs;
+  return outputs;
 }
 
 void Layer::printNodes()

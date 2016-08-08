@@ -1,5 +1,5 @@
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef LINK_H
+#define LINK_H
 
 class Link
 {

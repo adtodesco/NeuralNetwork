@@ -5,9 +5,9 @@
 
 int main()
 {
-  Network myNeuralNet = Network(5, 2, 10, 1);
+  Network myNeuralNet = Network(5, 10, 2, 1);
 
-  static const float arr[] = {1.0,2.0,3.0,4.0,5.0};
+  static const float arr[] = {1.0,2.5,3.5,4.5,1.5};
   std::vector<float> vec (arr, arr + sizeof(arr) / sizeof(arr[0]) );
 
   myNeuralNet.train(vec);

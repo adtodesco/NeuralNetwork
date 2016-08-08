@@ -1,14 +1,9 @@
 #include "Node.h"
 
-Node::Node(float v)
-{
-  setValue(v);
-}
-
-float Node::getOutput() {
-  // Activation function
-  return getValue();
-}
+//Node::Node(float v)
+//{
+//  setValue(v);
+//}
 
 /*
 void Node::addIncoming(Link l)

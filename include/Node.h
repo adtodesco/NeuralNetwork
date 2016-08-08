@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <vector>
-// #include "Link.h"
+#include <cmath>
 
 class Node
 {
@@ -14,11 +14,11 @@ private:
 //  std::vector<Link> outgoing;
 
 public:
-  Node(float v);
+  Node(float v) { setValue(v); }
 
 //  void addIncoming(Link c);
 //  void addOutgoing(Link c);
-  float getOutput();
+  float getOutput() { return 1 / (1 + std::exp(getValue())); }
   float getValue() { return value; }
   void setValue(float v) { value = v; }
 };

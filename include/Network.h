@@ -13,7 +13,7 @@ private:
   std::vector<Layer> layers;
 
 public:
-  Network(int in, int out, int hid, int lay);
+  Network(int in, int hid, int out, int lay);
   void initNetwork();
 
   void train(std::vector<float> inputs);
