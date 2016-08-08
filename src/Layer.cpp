@@ -4,7 +4,11 @@ Layer::Layer(int numNodes, int numPrevNodes)
 {
   setNumNodes(numNodes);
   setNumPrevNodes(numPrevNodes);
-  for (int n = 0; n < numNodes; n++) {
+  // Create numNodes + 1 nodes to include bias node
+  // Maybe this is wrong... if the bias node value doesn't change, and only
+  // the weights change, just make the bias node value a constant and add a link.
+  // This way, there won't need to be another case here for input layer nodes vs. other layers
+  for (int n = 0; n < numNodes + 1; n++) {
     Node newNode = Node(0);
     nodes.push_back(newNode);
   }
