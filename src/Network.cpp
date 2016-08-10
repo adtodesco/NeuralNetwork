@@ -38,7 +38,10 @@ void Network::initNetwork()
 }
 
 void Network::train(std::vector<float> inputs) {
+  int layer  = 0;
   for (std::vector<Layer>::iterator it = layers.begin() ; it != layers.end(); ++it) {
+    std::cout << "Layer " << layer << '\n';
     inputs = it->feedForward(inputs);
+    layer++;
   }
 }

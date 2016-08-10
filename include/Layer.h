@@ -14,7 +14,7 @@ private:
   std::vector< std::vector<Link> > links;
 
   int numNodes, numPrevNodes;
-  float getWeightedInput(std::vector<float> inputs, std::vector<Link> weights);
+  float getWeightedInput(std::vector<float> inputs, std::vector<Link> inputLinks);
 
 public:
   Layer(int numNodes, int numPrevNodes);
