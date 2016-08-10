@@ -8,32 +8,35 @@ Layer::Layer(int numNodes, int numPrevNodes)
   // Maybe this is wrong... if the bias node value doesn't change, and only
   // the weights change, just make the bias node value a constant and add a link.
   // This way, there won't need to be another case here for input layer nodes vs. other layers
-  for (int n = 0; n < numNodes + 1; n++) {
+  for (int n = 0; n < numNodes; n++) {
     Node newNode = Node(0);
     nodes.push_back(newNode);
   }
   for (int n = 0; n < numNodes; n++) {
     std::vector<Link> newVector;
     links.push_back(newVector);
-    for (int p = 0; p < numPrevNodes; p++) {
+    // Push back numPrevNodes + 1 to incorperate bias node
+    for (int pn = 0; pn < (numPrevNodes + 1); pn++) {
       Link newLink = Link(INITIALWEIGHT);
       links[n].push_back(newLink);
     }
   }
 }
 
-float Layer::getWeightedInput(std::vector<float> inputs, std::vector<Link> weights) {
+float Layer::getWeightedInput(std::vector<float> inputs, std::vector<Link> inputLinks) {
   float sum = 0.0;
   for (int pn = 0; pn < getNumPrevNodes(); pn++) {
-    std::cout << "Input: " << inputs[pn] << " Weight: " << weights[pn].getWeight() << '\n';
-    sum = sum + inputs[pn] * weights[pn].getWeight();
+    // std::cout << "Input: " << inputs[pn] << " Weight: " << inputLinks[pn].getWeight() << '\n';
+    sum = sum + inputs[pn] * inputLinks[pn].getWeight();
   }
+  // std::cout << "Input: " << BIASINPUT << " Weight: " << inputLinks[getNumPrevNodes()].getWeight() << '\n';
+  sum = sum + BIASINPUT * inputLinks[getNumPrevNodes()].getWeight();
   return sum;
 }
 
 std::vector<float> Layer::feedForward(std::vector<float> inputs) {
   // Update these nodes based on input nodes and return
-  printLinks();
+  // printLinks();
   std::vector<float> outputs;
   // Set outputs to inputs if input layer
   if (getNumPrevNodes() == 0) {
