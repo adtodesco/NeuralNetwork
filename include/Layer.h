@@ -22,8 +22,9 @@ public:
   void setNumNodes(int nNodes) { numNodes = nNodes; }
   void setNumPrevNodes(int nPrevNodes) { numPrevNodes = nPrevNodes; }
 
-  std::vector<Node> getNodes() { return nodes; }
-  std::vector< std::vector<Link> > getLinks() { return links; }
+  // Do I want getters/setters for private vectors?
+  // std::vector<Node> getNodes() { return nodes; }
+  // std::vector< std::vector<Link> > getLinks() { return links; }
   int getNumNodes() { return numNodes; }
   int getNumPrevNodes() { return numPrevNodes; }
 
