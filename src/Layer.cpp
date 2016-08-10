@@ -50,17 +50,15 @@ std::vector<float> Layer::feedForward(std::vector<float> inputs) {
 void Layer::printNodes()
 {
   for (std::vector<Node>::iterator it = nodes.begin() ; it != nodes.end(); ++it) {
-    std::cout << " Node: " << it - nodes.begin() << " = " << it->getValue();
-    std::cout << '\n';
+    std::cout << " Node: " << it - nodes.begin() << " = " << it->getValue() << '\n';
   }
 }
 
 void Layer::printLinks()
 {
-  for (std::vector< std::vector<Link> >::iterator vit = links.begin() ; vit != links.end(); ++vit) {  
-    for (std::vector<Link>::iterator lit = vit->begin() ; lit != vit->end(); ++lit) {
-      std::cout << " Link: " << vit - links.begin() << "->" << lit - vit->begin() << " = " <<  lit->getWeight();
-      std::cout << '\n';
+  for (int n = 0; n < getNumNodes(); n++) {
+    for (int pn = 0; pn < getNumPrevNodes(); pn++) {
+      std::cout << " Link: " << pn << "->" << n << " = " << links[n][pn].getWeight() << '\n';
     }
   }
 }
