@@ -13,26 +13,26 @@ Network::Network(int in, int hid, int out, int lay)
 void Network::initNetwork()
 {
   // Initialize input layer
-  Layer layer = Layer(numInputNodes, 0);
+  Layer layer = Layer(getNumInputNodes(), 0);
   layers.push_back(layer);
 
   // Initialize hidden layers
-  for (int hid = 0; hid < numHiddenLayers; hid++) {
+  for (int hid = 0; hid < getNumHiddenLayers(); hid++) {
     if (hid == 0) { 
-      layer = Layer(numHiddenNodes, numInputNodes);
+      layer = Layer(getNumHiddenNodes(), getNumInputNodes());
     }
     else {
-     layer = Layer(numHiddenNodes, numHiddenNodes);
+     layer = Layer(getNumHiddenNodes(), getNumHiddenNodes());
     }
     layers.push_back(layer);
   }
 
   // Initialize output leyer
-  if (numHiddenNodes == 0) {
-    layer = Layer(numOutputNodes, numInputNodes);
+  if (getNumHiddenNodes() == 0) {
+    layer = Layer(getNumOutputNodes(), getNumInputNodes());
   }
   else {
-    layer = Layer(numOutputNodes, numHiddenNodes);
+    layer = Layer(getNumOutputNodes(), getNumHiddenNodes());
   }
   layers.push_back(layer);
 }

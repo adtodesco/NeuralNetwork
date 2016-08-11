@@ -19,8 +19,10 @@ public:
   void train(std::vector<float> inputs);
   void writeWeights();
   
-  void test();
-
+  int getNumInputNodes() { return numInputNodes; }
+  int getNumOutputNodes() { return numOutputNodes; }
+  int getNumHiddenNodes() { return numHiddenNodes; }
+  int getNumHiddenLayers() { return numHiddenLayers; }
 };
 
 #endif

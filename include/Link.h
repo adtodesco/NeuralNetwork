@@ -7,7 +7,7 @@ private:
   float weight;
 
 public:
-  Link(float w);
+  Link(float w) { setWeight(w); }
 
   float getWeight() { return weight; }
   void setWeight(float w) { weight = w; }

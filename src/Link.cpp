@@ -1,6 +1,6 @@
 #include "Link.h"
 
-Link::Link(float w)
-{
-  setWeight(w);
-}
+//Link::Link(float w)
+//{
+//  setWeight(w);
+//}
