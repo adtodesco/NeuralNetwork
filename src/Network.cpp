@@ -37,11 +37,15 @@ void Network::initNetwork()
   layers.push_back(layer);
 }
 
-void Network::train(std::vector<float> inputs) {
+float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector<float> expectedOutputs) {
+  
+}
+void Network::train(std::vector<float> inputs, std::vector<float> expectedOutputs) {
   int layer  = 0;
   for (std::vector<Layer>::iterator it = layers.begin() ; it != layers.end(); ++it) {
     std::cout << "Layer " << layer << '\n';
     inputs = it->feedForward(inputs);
     layer++;
   }
+  std::vector<float> actualOutputs = inputs;
 }

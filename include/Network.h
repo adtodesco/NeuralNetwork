@@ -16,8 +16,10 @@ public:
   Network(int in, int hid, int out, int lay);
   void initNetwork();
 
-  void train(std::vector<float> inputs);
+  void train(std::vector<float> inputs, std::vector<float> expectedOutputs);
   void writeWeights();
+  float calculateTotalError(std::vector<float> actualOutputs, std::vector<float> expectedOutputs);
+
   
   int getNumInputNodes() { return numInputNodes; }
   int getNumOutputNodes() { return numOutputNodes; }
