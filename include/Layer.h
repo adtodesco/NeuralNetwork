@@ -15,6 +15,8 @@ private:
 
   int numNodes, numPrevNodes;
   float getWeightedInput(std::vector<float> inputs, std::vector<Link> inputLinks);
+  std::vector<float> calculateLinkDeltas();
+  void calculateNodeDeltas(std::vector<float> linkDeltas);
 
 public:
   Layer(int numNodes, int numPrevNodes);
@@ -29,6 +31,7 @@ public:
   int getNumPrevNodes() { return numPrevNodes; }
 
   std::vector<float> feedForward(std::vector<float> inputs); 
+  std::vector<float> backPropegation(std::vector<float> linkDeltas);
 
   void printNodes();
   void printLinks();

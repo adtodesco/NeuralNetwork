@@ -8,19 +8,16 @@
 class Node
 {
 private:
-  float value;
-
-//  std::vector<Link> incoming;
-//  std::vector<Link> outgoing;
+  float value, output, delta;
 
 public:
   Node(float v) { setValue(v); }
 
-//  void addIncoming(Link c);
-//  void addOutgoing(Link c);
-  float getOutput() { return 1 / (1 + std::exp(getValue())); }
+  float getOutput() { return output; }
   float getValue() { return value; }
-  void setValue(float v) { value = v; }
+  float getDelta() { return delta; }
+  void setValue(float v);
+  void setDelta(float d) { delta = d; }
 };
 
 #endif

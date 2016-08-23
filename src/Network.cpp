@@ -38,8 +38,10 @@ void Network::initNetwork()
 }
 
 float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector<float> expectedOutputs) {
-  
+  float totalError = 0.0;
+  return totalError;
 }
+
 void Network::train(std::vector<float> inputs, std::vector<float> expectedOutputs) {
   int layer  = 0;
   for (std::vector<Layer>::iterator it = layers.begin() ; it != layers.end(); ++it) {
@@ -48,4 +50,7 @@ void Network::train(std::vector<float> inputs, std::vector<float> expectedOutput
     layer++;
   }
   std::vector<float> actualOutputs = inputs;
+  for (std::vector<Layer>::iterator it = layers.end() ; it != layers.begin(); --it) {
+
+  }
 }

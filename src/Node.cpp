@@ -5,6 +5,11 @@
 //  setValue(v);
 //}
 
+void Node::setValue(float v) { 
+  value = v;
+  output = 1 / (1 + std::exp(v));
+}
+
 /*
 void Node::addIncoming(Link l)
 {
