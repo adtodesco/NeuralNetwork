@@ -42,8 +42,12 @@ float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector
   return totalError;
 }
 
+std::vector<float> Network::calculateInitialDeltas(std::vector<float> actualOutputs, std::vector<float> expectedOutputs) {
+  return actualOutputs;
+}
+
 void Network::train(std::vector<float> inputs, std::vector<float> expectedOutputs) {
-  int layer  = 0;
+  int layer = 0;
   for (std::vector<Layer>::iterator it = layers.begin() ; it != layers.end(); ++it) {
     std::cout << "Layer " << layer << '\n';
     inputs = it->feedForward(inputs);
@@ -53,9 +57,10 @@ void Network::train(std::vector<float> inputs, std::vector<float> expectedOutput
   
   // Calulate total error?
 
+  std::vector<float> deltas = calculateInitialDeltas(actualOutputs, expectedOutputs);
   for (std::vector<Layer>::iterator it = layers.end() ; it != layers.begin(); --it) {
     std::cout << "Layer " << layer << '\n';
-    deltas = it->backPropegation(deltas);
-    layers--;
+    // deltas = it->backPropegation(deltas);
+    layer--;
   }
 }

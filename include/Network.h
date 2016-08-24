@@ -11,6 +11,8 @@ class Network
 private:
   int numInputNodes, numOutputNodes, numHiddenNodes, numHiddenLayers;
   std::vector<Layer> layers;
+  float calculateTotalError(std::vector<float> actualOutputs, std::vector<float> expectedOutputs);
+  std::vector<float> calculateInitialDeltas(std::vector<float> actualOutputs, std::vector<float> expectedOutputs);
 
 public:
   Network(int in, int hid, int out, int lay);
@@ -18,8 +20,6 @@ public:
 
   void train(std::vector<float> inputs, std::vector<float> expectedOutputs);
   void writeWeights();
-  float calculateTotalError(std::vector<float> actualOutputs, std::vector<float> expectedOutputs);
-
   
   int getNumInputNodes() { return numInputNodes; }
   int getNumOutputNodes() { return numOutputNodes; }

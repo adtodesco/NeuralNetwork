@@ -55,14 +55,14 @@ std::vector<float> Layer::feedForward(std::vector<float> inputs) {
 }
 
 // Calculate the delta values for each node
-void Layer::calculateNodeDeltas(std::vector<float> linkDeltas) {
+void Layer::updateDeltas(std::vector<float> deltinis) {
   for (int n = 0; n < getNumNodes(); n++) {
-    nodes[n].setDelta(linkDeltas[n] * nodes[n].getOutput() * (1 - nodes[n].getOutput()));
+    nodes[n].setDelta(deltinis[n] * nodes[n].getOutput() * (1 - nodes[n].getOutput()));
   }
 }
 
-// Calculate the summed-seighted-delta values for each link
-std::vector<float> Layer::calculateLinkDeltas() {
+// Calculate the summed-weighted-delta values for each link
+std::vector<float> Layer::getDeltinis() {
   std::vector<float> summedDeltas;
   for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
     float summedDelta = 0.0;
@@ -74,18 +74,18 @@ std::vector<float> Layer::calculateLinkDeltas() {
   return summedDeltas; 
 }
 
-std::vector<float> Layer::backPropegation(std::vector<float> linkDeltas) {
+std::vector<float> Layer::backPropegation(std::vector<float> deltinis) {
     // getSummedDeltas (deltas)
     // calculateCurrentDelta
     // updateCurrentDelta
-    calculateNodeDeltas(linkDeltas);
+    updateDeltas(deltinis);
 
     // multiply by input to get partial deriv wrt weight
 
     // update the weight
 
     // Return vector of summed-weighted-deltas for next iteration
-    return calculateLinkDeltas(); 
+    return getDeltinis(); 
 }
 
 void Layer::printNodes()
