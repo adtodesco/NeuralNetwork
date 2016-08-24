@@ -50,7 +50,12 @@ void Network::train(std::vector<float> inputs, std::vector<float> expectedOutput
     layer++;
   }
   std::vector<float> actualOutputs = inputs;
-  for (std::vector<Layer>::iterator it = layers.end() ; it != layers.begin(); --it) {
+  
+  // Calulate total error?
 
+  for (std::vector<Layer>::iterator it = layers.end() ; it != layers.begin(); --it) {
+    std::cout << "Layer " << layer << '\n';
+    deltas = it->backPropegation(deltas);
+    layers--;
   }
 }
