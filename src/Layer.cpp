@@ -78,6 +78,7 @@ std::vector<float> Layer::backPropegation(std::vector<float> deltinis) {
     // getSummedDeltas (deltas)
     // calculateCurrentDelta
     // updateCurrentDelta
+    std::cout << "Back Prop";
     updateDeltas(deltinis);
 
     // multiply by input to get partial deriv wrt weight

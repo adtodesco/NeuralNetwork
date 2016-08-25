@@ -37,30 +37,32 @@ void Network::initNetwork()
   layers.push_back(layer);
 }
 
-float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector<float> expectedOutputs) {
+float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector<float> targetOutputs) {
   float totalError = 0.0;
   return totalError;
 }
 
-std::vector<float> Network::calculateInitialDeltas(std::vector<float> actualOutputs, std::vector<float> expectedOutputs) {
-  return actualOutputs;
+std::vector<float> Network::calculateInitialDeltinis(std::vector<float> actualOutputs, std::vector<float> targetOutputs) {
+  std::vector<float> deltas;
+  for (int n = 0; n < actualOutputs.size(); n++) {
+    deltas.push_back(-1 * (targetOutputs[n] - actualOutputs[n]));
+  }
+  return deltas;
 }
 
-void Network::train(std::vector<float> inputs, std::vector<float> expectedOutputs) {
+void Network::train(std::vector<float> inputs, std::vector<float> targetOutputs) {
   int layer = 0;
-  for (std::vector<Layer>::iterator it = layers.begin() ; it != layers.end(); ++it) {
+  for (std::vector<Layer>::iterator it = layers.begin(); it != layers.end(); ++it) {
     std::cout << "Layer " << layer << '\n';
     inputs = it->feedForward(inputs);
     layer++;
   }
   std::vector<float> actualOutputs = inputs;
-  
   // Calulate total error?
-
-  std::vector<float> deltas = calculateInitialDeltas(actualOutputs, expectedOutputs);
-  for (std::vector<Layer>::iterator it = layers.end() ; it != layers.begin(); --it) {
-    std::cout << "Layer " << layer << '\n';
-    // deltas = it->backPropegation(deltas);
+  std::vector<float> deltinis = calculateInitialDeltinis(actualOutputs, targetOutputs);
+  for (std::vector<Layer>::reverse_iterator it = layers.rbegin(); it != layers.rend(); ++it) {
+    std::cout << "Rlayer " << layer << '\n';
+    deltinis = it->backPropegation(deltinis);
     layer--;
   }
 }
