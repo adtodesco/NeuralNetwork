@@ -4,21 +4,20 @@ Layer::Layer(int numNodes, int numPrevNodes)
 {
   setNumNodes(numNodes);
   setNumPrevNodes(numPrevNodes);
-  // Create numNodes + 1 nodes to include bias node
-  // Maybe this is wrong... if the bias node value doesn't change, and only
-  // the weights change, just make the bias node value a constant and add a link.
-  // This way, there won't need to be another case here for input layer nodes vs. other layers
   for (int n = 0; n < numNodes; n++) {
     Node newNode = Node(0);
     nodes.push_back(newNode);
   }
-  for (int n = 0; n < numNodes; n++) {
-    std::vector<Link> newVector;
-    links.push_back(newVector);
-    // Push back numPrevNodes + 1 to incorperate bias node
-    for (int pn = 0; pn < (numPrevNodes + 1); pn++) {
-      Link newLink = Link(INITIALWEIGHT);
-      links[n].push_back(newLink);
+  // Skip adding links to input layer
+  if (numPrevNodes > 0) {
+    for (int n = 0; n < numNodes; n++) {
+      std::vector<Link> newVector;
+      links.push_back(newVector);
+      // Push back numPrevNodes + 1 to incorperate bias node
+      for (int pn = 0; pn < numPrevNodes + 1; pn++) {
+	Link newLink = Link(INITIALWEIGHT);
+	links[n].push_back(newLink);
+      }
     }
   }
 }
@@ -47,7 +46,7 @@ std::vector<float> Layer::feedForward(std::vector<float> inputs) {
       float weightedInput = getWeightedInput(inputs, links[n]);
       nodes[n].setValue(weightedInput);
       outputs.push_back(nodes[n].getOutput());
-      std::cout << "Weighted input for Node " << n << " = " << weightedInput << '\n';
+      // std::cout << "Weighted input for Node " << n << " = " << weightedInput << '\n';
     }
   }
   // Return outputed values from nodes
@@ -67,7 +66,7 @@ std::vector<float> Layer::getDeltinis() {
   for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
     float summedDelta = 0.0;
     for (int n = 0; n < getNumNodes(); n++) {
-      summedDelta = summedDelta + links[pn][n].getWeight() * nodes[n].getDelta(); 
+      summedDelta = summedDelta + links[n][pn].getWeight() * nodes[n].getDelta();
     }
     summedDeltas.push_back(summedDelta);
   }
@@ -78,7 +77,6 @@ std::vector<float> Layer::backPropegation(std::vector<float> deltinis) {
     // getSummedDeltas (deltas)
     // calculateCurrentDelta
     // updateCurrentDelta
-    std::cout << "Back Prop";
     updateDeltas(deltinis);
 
     // multiply by input to get partial deriv wrt weight
@@ -99,7 +97,7 @@ void Layer::printNodes()
 void Layer::printLinks()
 {
   for (int n = 0; n < getNumNodes(); n++) {
-    for (int pn = 0; pn < getNumPrevNodes(); pn++) {
+    for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
       std::cout << " Link: " << pn << "->" << n << " = " << links[n][pn].getWeight() << '\n';
     }
   }
