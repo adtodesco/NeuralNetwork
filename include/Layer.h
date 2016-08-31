@@ -12,11 +12,17 @@ class Layer
 private:
   std::vector<Node> nodes;
   std::vector< std::vector<Link> > links;
+  std::vector<float> inputs;
 
   int numNodes, numPrevNodes;
-  float getWeightedInput(std::vector<float> inputs, std::vector<Link> inputLinks);
+
   void updateDeltas(std::vector<float> deltinis);
+  void updateInputs(std::vector<float> in) { inputs = in; }
+  void updateWeights();
+
+  float getWeightedInput(std::vector<Link> inputLinks);
   std::vector<float> getDeltinis();
+  std::vector<float> getInputs() { return inputs; }
 
 public:
   Layer(int numNodes, int numPrevNodes);
@@ -30,7 +36,7 @@ public:
   int getNumNodes() { return numNodes; }
   int getNumPrevNodes() { return numPrevNodes; }
 
-  std::vector<float> feedForward(std::vector<float> inputs); 
+  std::vector<float> feedForward(std::vector<float> in); 
   std::vector<float> backPropegation(std::vector<float> deltinis);
 
   void printNodes();

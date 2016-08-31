@@ -57,15 +57,18 @@ void Network::train(std::vector<float> inputs, std::vector<float> targetOutputs)
     inputs = it->feedForward(inputs);
     layer++;
   }
-  std::vector<float> actualOutputs = inputs;
   // Calulate total error?
-  layer--;
-  std::vector<float> deltinis = calculateInitialDeltinis(actualOutputs, targetOutputs);
+
+  // Final inputs are the actual outputs
+  std::vector<float> deltinis = calculateInitialDeltinis(inputs, targetOutputs);
+
   // Loop back and stop before input layer
+  layer--;
   for (std::vector<Layer>::reverse_iterator rt = layers.rbegin(); rt != layers.rend() - 1; ++rt) {
     std::cout << "Layer " << layer << '\n';
     rt->printLinks();
     deltinis = rt->backPropegation(deltinis);
+    rt->printLinks();
     layer--;
   }
 }

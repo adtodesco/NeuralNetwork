@@ -22,28 +22,29 @@ Layer::Layer(int numNodes, int numPrevNodes)
   }
 }
 
-float Layer::getWeightedInput(std::vector<float> inputs, std::vector<Link> inputLinks) {
+float Layer::getWeightedInput(std::vector<Link> inputLinks) {
   float sum = 0.0;
   for (int pn = 0; pn < getNumPrevNodes(); pn++) {
-    // std::cout << "Input: " << inputs[pn] << " Weight: " << inputLinks[pn].getWeight() << '\n';
-    sum = sum + inputs[pn] * inputLinks[pn].getWeight();
+    // std::cout << "Input: " << getInputs()[pn] << " Weight: " << inputLinks[pn].getWeight() << '\n';
+    sum = sum + getInputs()[pn] * inputLinks[pn].getWeight();
   }
   // std::cout << "Input: " << BIASINPUT << " Weight: " << inputLinks[getNumPrevNodes()].getWeight() << '\n';
   sum = sum + BIASINPUT * inputLinks[getNumPrevNodes()].getWeight();
   return sum;
 }
 
-std::vector<float> Layer::feedForward(std::vector<float> inputs) {
+std::vector<float> Layer::feedForward(std::vector<float> in) {
+  updateInputs(in);
   // Update these nodes based on input nodes and return
   // printLinks();
   std::vector<float> outputs;
   // Set outputs to inputs if input layer
   if (getNumPrevNodes() == 0) {
-    outputs = inputs;
+    outputs = getInputs();
   }
   else {
     for (int n = 0; n < getNumNodes(); n++) { 
-      float weightedInput = getWeightedInput(inputs, links[n]);
+      float weightedInput = getWeightedInput(links[n]);
       nodes[n].setValue(weightedInput);
       outputs.push_back(nodes[n].getOutput());
       // std::cout << "Weighted input for Node " << n << " = " << weightedInput << '\n';
@@ -53,11 +54,20 @@ std::vector<float> Layer::feedForward(std::vector<float> inputs) {
   return outputs;
 }
 
-// Calculate the delta values for each node
+// Calculate and update delta values for each node from next layer deltinis
 void Layer::updateDeltas(std::vector<float> deltinis) {
   for (int n = 0; n < getNumNodes(); n++) {
     nodes[n].setDelta(deltinis[n] * nodes[n].getOutput() * (1 - nodes[n].getOutput()));
   }
+}
+
+// Calculate and update weight values for each link
+void Layer::updateWeights() {
+  for (int n = 0; n < getNumNodes(); n++) {
+    for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
+      links[n][pn] = nodes[n].getDelta() * getInputs()[pn];
+    }
+  } 
 }
 
 // Calculate the summed-weighted-delta values for each link
@@ -74,17 +84,17 @@ std::vector<float> Layer::getDeltinis() {
 }
 
 std::vector<float> Layer::backPropegation(std::vector<float> deltinis) {
-    // getSummedDeltas (deltas)
-    // calculateCurrentDelta
-    // updateCurrentDelta
+    // Calculate and update delta values for each node from next layer deltinis
     updateDeltas(deltinis);
 
-    // multiply by input to get partial deriv wrt weight
+    // Calculate deltinis for use in previous layer delta calculations
+    deltinis = getDeltinis();
 
-    // update the weight
+    // Update weights after calculating deltinis to preserve original weights
+    // in deltini calculation
+    updateWeights();
 
-    // Return vector of summed-weighted-deltas for next iteration
-    return getDeltinis(); 
+    return deltinis; 
 }
 
 void Layer::printNodes()
