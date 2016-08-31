@@ -52,18 +52,20 @@ float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector
 }
 
 std::vector<float> Network::calculateInitialDeltinis(std::vector<float> actualOutputs, std::vector<float> targetOutputs) {
-  std::vector<float> deltas;
+  std::vector<float> deltinis;
   for (int n = 0; n < actualOutputs.size(); n++) {
-    deltas.push_back(-1 * (targetOutputs[n] - actualOutputs[n]));
+    deltinis.push_back(-1 * (targetOutputs[n] - actualOutputs[n]));
   }
-  return deltas;
+  return deltinis;
 }
 
 void Network::train(std::vector<float> inputs, std::vector<float> targetOutputs) {
   int layer = 0;
   for (std::vector<Layer>::iterator it = layers.begin(); it != layers.end(); ++it) {
     //std::cout << "Layer " << layer << '\n';
+    it->printNodes();
     inputs = it->feedForward(inputs);
+    it->printNodes();
     layer++;
   }
 

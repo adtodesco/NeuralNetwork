@@ -65,7 +65,7 @@ void Layer::updateDeltas(std::vector<float> deltinis) {
 void Layer::updateWeights() {
   for (int n = 0; n < getNumNodes(); n++) {
     for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
-      links[n][pn] = nodes[n].getDelta() * getInputs()[pn];
+      links[n][pn].updateWeight(nodes[n].getDelta(), getInputs()[pn]);
     }
   } 
 }
@@ -99,6 +99,7 @@ std::vector<float> Layer::backPropegation(std::vector<float> deltinis) {
 
 void Layer::printNodes()
 {
+  std::cout << "===========================\n";
   for (std::vector<Node>::iterator it = nodes.begin() ; it != nodes.end(); ++it) {
     std::cout << " Node: " << it - nodes.begin() << " = " << it->getValue() << '\n';
   }
@@ -106,7 +107,7 @@ void Layer::printNodes()
 
 void Layer::printLinks()
 {
-  std::cout << "==============================\n";
+  std::cout << "===========================\n";
   for (int n = 0; n < getNumNodes(); n++) {
     for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
       std::cout << " Link: " << pn << "->" << n << " = " << links[n][pn].getWeight() << '\n';

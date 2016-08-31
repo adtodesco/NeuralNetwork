@@ -6,6 +6,5 @@
 //}
 
 void Link::updateWeight(float delta, float input) {
-  setDelta(delta);
-  setWeight(getWeight() * LEARNINGRATE * delta * input); 
+  setWeight(getWeight() - LEARNINGRATE * delta * input); 
 }
