@@ -1,5 +1,6 @@
 #include "Network.h"
-  
+
+// Public constructor  
 Network::Network(int in, int hid, int out, int lay)
 {
   numInputNodes = in;
@@ -37,13 +38,14 @@ void Network::initNetwork()
   layers.push_back(layer);
 }
 
+// Calculate total error of the Network outputs w.r.t. the target outputs
 float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector<float> targetOutputs) {
   float error;
   float totalError = 0.0;
   for (int n = 0; n < actualOutputs.size(); n++) {
     error = 0.5 * pow((targetOutputs[n] - actualOutputs[n]), 2);
     totalError = totalError + error;
-    std::cout << "Node " << n << ":\n";
+    std::cout << "Output Node " << n << ":\n";
     std::cout << "  Target: " << targetOutputs[n] << " Actual: " << actualOutputs[n] << '\n';
     std::cout << "  Error: " << error << '\n';
   }
@@ -51,6 +53,7 @@ float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector
   return totalError;
 }
 
+// Calculate the deltinits for the output nodes
 std::vector<float> Network::calculateInitialDeltinis(std::vector<float> actualOutputs, std::vector<float> targetOutputs) {
   std::vector<float> deltinis;
   for (int n = 0; n < actualOutputs.size(); n++) {
@@ -59,27 +62,20 @@ std::vector<float> Network::calculateInitialDeltinis(std::vector<float> actualOu
   return deltinis;
 }
 
-void Network::train(std::vector<float> inputs, std::vector<float> targetOutputs) {
-  int layer = 0;
+// Train Network on a set of inputs and target outputs
+float Network::train(std::vector<float> inputs, std::vector<float> targetOutputs) {
+  // Loop forward
   for (std::vector<Layer>::iterator it = layers.begin(); it != layers.end(); ++it) {
-    //std::cout << "Layer " << layer << '\n';
-    it->printNodes();
     inputs = it->feedForward(inputs);
-    it->printNodes();
-    layer++;
   }
 
   // Final inputs are the actual outputs
-  calculateTotalError(inputs, targetOutputs);
+  float totalError = calculateTotalError(inputs, targetOutputs);
   std::vector<float> deltinis = calculateInitialDeltinis(inputs, targetOutputs);
 
   // Loop back and stop before input layer
-  layer--;
   for (std::vector<Layer>::reverse_iterator rt = layers.rbegin(); rt != layers.rend() - 1; ++rt) {
-    //std::cout << "Layer " << layer << '\n';
-    rt->printLinks();
     deltinis = rt->backPropegation(deltinis);
-    rt->printLinks();
-    layer--;
   }
+  return totalError;
 }

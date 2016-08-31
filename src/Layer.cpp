@@ -1,15 +1,18 @@
 #include "Layer.h"
 
+// Public constructor
 Layer::Layer(int numNodes, int numPrevNodes)
 {
   setNumNodes(numNodes);
   setNumPrevNodes(numPrevNodes);
+  // Initialize nodes
   for (int n = 0; n < numNodes; n++) {
     Node newNode = Node(0);
     nodes.push_back(newNode);
   }
   // Skip adding links to input layer
   if (numPrevNodes > 0) {
+    // Initialize links
     for (int n = 0; n < numNodes; n++) {
       std::vector<Link> newVector;
       links.push_back(newVector);
@@ -22,35 +25,33 @@ Layer::Layer(int numNodes, int numPrevNodes)
   }
 }
 
-float Layer::getWeightedInput(std::vector<Link> inputLinks) {
+// Calculate the weighted input for node in layer 
+float Layer::calculateWeightedInput(std::vector<Link> inputLinks) {
   float sum = 0.0;
   for (int pn = 0; pn < getNumPrevNodes(); pn++) {
-    // std::cout << "Input: " << getInputs()[pn] << " Weight: " << inputLinks[pn].getWeight() << '\n';
     sum = sum + getInputs()[pn] * inputLinks[pn].getWeight();
   }
-  // std::cout << "Input: " << BIASINPUT << " Weight: " << inputLinks[getNumPrevNodes()].getWeight() << '\n';
   sum = sum + BIASINPUT * inputLinks[getNumPrevNodes()].getWeight();
   return sum;
 }
 
+// Feed inputs through Network
 std::vector<float> Layer::feedForward(std::vector<float> in) {
-  updateInputs(in);
-  // Update these nodes based on input nodes and return
-  // printLinks();
+  // Update inputs vector instance variable
+  setInputs(in);
+
   std::vector<float> outputs;
-  // Set outputs to inputs if input layer
+  // Outputs are equivilent to inputs in the first layer
   if (getNumPrevNodes() == 0) {
     outputs = getInputs();
   }
   else {
+    // Set new values and obtain output for the input to the next layer
     for (int n = 0; n < getNumNodes(); n++) { 
-      float weightedInput = getWeightedInput(links[n]);
-      nodes[n].setValue(weightedInput);
+      nodes[n].setValue(calculateWeightedInput(links[n]));
       outputs.push_back(nodes[n].getOutput());
-      //std::cout << "Weighted input for Node " << n << " = " << weightedInput << '\n';
     }
   }
-  // Return outputed values from nodes
   return outputs;
 }
 
@@ -70,25 +71,26 @@ void Layer::updateWeights() {
   } 
 }
 
-// Calculate the summed-weighted-delta values for each link
-std::vector<float> Layer::getDeltinis() {
-  std::vector<float> summedDeltas;
+// Calculate the deltini for each node in the previous layer
+std::vector<float> Layer::calculateDeltinis() {
+  std::vector<float> deltinis;
   for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
-    float summedDelta = 0.0;
+    float deltini = 0.0;
     for (int n = 0; n < getNumNodes(); n++) {
-      summedDelta = summedDelta + links[n][pn].getWeight() * nodes[n].getDelta();
+      deltini = deltini + links[n][pn].getWeight() * nodes[n].getDelta();
     }
-    summedDeltas.push_back(summedDelta);
+    deltinis.push_back(deltini);
   }
-  return summedDeltas; 
+  return deltinis; 
 }
 
+// Back propegation algorithm to update weights
 std::vector<float> Layer::backPropegation(std::vector<float> deltinis) {
     // Calculate and update delta values for each node from next layer deltinis
     updateDeltas(deltinis);
 
-    // Calculate deltinis for use in previous layer delta calculations
-    deltinis = getDeltinis();
+    // Calculate deltinis for use in previous layer's delta calculations
+    deltinis = calculateDeltinis();
 
     // Update weights after calculating deltinis to preserve original weights
     // in deltini calculation
@@ -97,6 +99,7 @@ std::vector<float> Layer::backPropegation(std::vector<float> deltinis) {
     return deltinis; 
 }
 
+// Print node values in the layer
 void Layer::printNodes()
 {
   std::cout << "===========================\n";
@@ -105,6 +108,7 @@ void Layer::printNodes()
   }
 }
 
+// Print link weights in the layer
 void Layer::printLinks()
 {
   std::cout << "===========================\n";

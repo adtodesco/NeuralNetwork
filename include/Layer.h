@@ -17,11 +17,12 @@ private:
   int numNodes, numPrevNodes;
 
   void updateDeltas(std::vector<float> deltinis);
-  void updateInputs(std::vector<float> in) { inputs = in; }
   void updateWeights();
 
-  float getWeightedInput(std::vector<Link> inputLinks);
-  std::vector<float> getDeltinis();
+  void setInputs(std::vector<float> in) { inputs = in; }
+
+  float calculateWeightedInput(std::vector<Link> inputLinks);
+  std::vector<float> calculateDeltinis();
   std::vector<float> getInputs() { return inputs; }
 
 public:
@@ -30,9 +31,6 @@ public:
   void setNumNodes(int nNodes) { numNodes = nNodes; }
   void setNumPrevNodes(int nPrevNodes) { numPrevNodes = nPrevNodes; }
 
-  // Do I want getters/setters for private vectors?
-  // std::vector<Node> getNodes() { return nodes; }
-  // std::vector< std::vector<Link> > getLinks() { return links; }
   int getNumNodes() { return numNodes; }
   int getNumPrevNodes() { return numPrevNodes; }
 
