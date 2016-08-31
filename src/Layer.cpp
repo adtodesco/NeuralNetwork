@@ -47,7 +47,7 @@ std::vector<float> Layer::feedForward(std::vector<float> in) {
       float weightedInput = getWeightedInput(links[n]);
       nodes[n].setValue(weightedInput);
       outputs.push_back(nodes[n].getOutput());
-      // std::cout << "Weighted input for Node " << n << " = " << weightedInput << '\n';
+      //std::cout << "Weighted input for Node " << n << " = " << weightedInput << '\n';
     }
   }
   // Return outputed values from nodes
@@ -106,6 +106,7 @@ void Layer::printNodes()
 
 void Layer::printLinks()
 {
+  std::cout << "==============================\n";
   for (int n = 0; n < getNumNodes(); n++) {
     for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
       std::cout << " Link: " << pn << "->" << n << " = " << links[n][pn].getWeight() << '\n';

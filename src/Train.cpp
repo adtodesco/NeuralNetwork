@@ -16,6 +16,8 @@ int main()
   std::vector<float> inputVec (inputArr, inputArr + sizeof(inputArr) / sizeof(inputArr[0]) );
   std::vector<float> outputVec (outputArr, outputArr + sizeof(outputArr) / sizeof(outputArr[0]) );
 
-  myNeuralNet.train(inputVec, outputVec);
+  for (int it = 0; it < 10; it++) {
+    myNeuralNet.train(inputVec, outputVec);
+  }
   return 0;
 }
