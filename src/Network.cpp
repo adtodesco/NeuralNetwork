@@ -13,12 +13,12 @@ Network::Network(int in, int hid, int out, int lay)
 // Initialize Network Layers
 void Network::initNetwork()
 {
-  // Initialize input layer
-  Layer layer = Layer(getNumInputNodes(), 0);
-  layers.push_back(layer);
-  
   // Initialize random seed
   srand(time(NULL));
+
+  // Initialize input layer
+  Layer layer = Layer(getNumInputNodes(), 0);
+  layers.push_back(layer);  
 
   // Initialize hidden layers
   for (int hid = 0; hid < getNumHiddenLayers(); hid++) {
