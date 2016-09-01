@@ -4,8 +4,7 @@
 float Layer::randomFloat() {
   int randInt = rand() % (INITIALWEIGHTRANGE * 1000) - (INITIALWEIGHTRANGE * 500);
   float randFl = (float) randInt / 1000;
-  //return randFl;
-  return 0.1;
+  return randFl;
 }
 
 // Public constructor
@@ -73,9 +72,10 @@ void Layer::updateDeltas(std::vector<float> deltinis) {
 // Calculate and update weight values for each link
 void Layer::updateWeights() {
   for (int n = 0; n < getNumNodes(); n++) {
-    for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
+    for (int pn = 0; pn < getNumPrevNodes(); pn++) {
       links[n][pn].updateWeight(nodes[n].getDelta(), getInputs()[pn]);
     }
+    links[n][getNumPrevNodes()].updateWeight(nodes[n].getDelta(), BIASINPUT);
   } 
 }
 

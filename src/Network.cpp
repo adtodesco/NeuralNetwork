@@ -18,7 +18,7 @@ void Network::initNetwork()
 
   // Initialize input layer
   Layer layer = Layer(getNumInputNodes(), 0);
-  layers.push_back(layer);
+  layers.push_back(layer); 
 
   // Initialize hidden layers
   for (int hid = 0; hid < getNumHiddenLayers(); hid++) {
