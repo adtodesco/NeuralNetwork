@@ -5,9 +5,6 @@
 
 int main()
 {
-  // Initialize random seed
-  srand(time(NULL));
-
   Network myNeuralNet = Network(2, 5, 2, 1);
   //Network myNeuralNet = Network(10, 5, 7, 1);
   //Network myNeuralNet = Network(5, 5, 2, 1);
@@ -22,7 +19,7 @@ int main()
   float totalError = 1.0;
   float prevTotalError = totalError;
   int iterations = 0;
-  while ((totalError > 0.0001) && (totalError <= prevTotalError)) {
+  while (totalError > 0.0001) {
   //for (int i = 0; i < 10; i++) {
     prevTotalError = totalError;
     iterations++;
