@@ -8,11 +8,11 @@ int main()
   // Initialize random seed
   srand(time(NULL));
 
-  Network myNeuralNet = Network(2, 2, 2, 1);
+  Network myNeuralNet = Network(2, 5, 2, 1);
   //Network myNeuralNet = Network(10, 5, 7, 1);
   //Network myNeuralNet = Network(5, 5, 2, 1);
 
-  static const float inputArr[] = {-10, -3.0};
+  static const float inputArr[] = {4.5, -2.3 };
   //static const float inputArr[] = {1.0,2.5,3.5,4.2,4.3,1.5,2.5,1.9,-1.0,-2.6};
   //static const float inputArr[] = {1.0,2.5,3.5,4.5,1.5};
   static const float outputArr[] = {0.99, 0.01};
