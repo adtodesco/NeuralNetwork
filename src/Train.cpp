@@ -5,6 +5,9 @@
 
 int main()
 {
+  // Initialize random seed
+  srand(time(NULL));
+
   Network myNeuralNet = Network(2, 2, 2, 1);
   //Network myNeuralNet = Network(10, 5, 7, 1);
   //Network myNeuralNet = Network(5, 5, 2, 1);
@@ -17,14 +20,17 @@ int main()
   std::vector<float> outputVec (outputArr, outputArr + sizeof(outputArr) / sizeof(outputArr[0]) );
 
   float totalError = 1.0;
+  float prevTotalError = totalError;
   int iterations = 0;
-  while (totalError > 0.0001) {
+  while ((totalError > 0.0001) && (totalError <= prevTotalError)) {
   //for (int i = 0; i < 10; i++) {
+    prevTotalError = totalError;
     iterations++;
     std::cout << "===============\n";
     std::cout << "Iteration: " << iterations << '\n';
     std::cout << "===============\n";
     totalError = myNeuralNet.train(inputVec, outputVec);
+    std::cout << "totalError: " << totalError << " prevTotalError " << prevTotalError << '\n';
   }
   return 0;
 }

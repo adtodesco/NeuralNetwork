@@ -13,9 +13,6 @@ Network::Network(int in, int hid, int out, int lay)
 // Initialize Network Layers
 void Network::initNetwork()
 {
-  // Initialize random seed
-  srand(time(NULL));
-
   // Initialize input layer
   Layer layer = Layer(getNumInputNodes(), 0);
   layers.push_back(layer);
@@ -68,7 +65,11 @@ std::vector<float> Network::calculateInitialDeltinis(std::vector<float> actualOu
 // Train Network on a set of inputs and target outputs
 float Network::train(std::vector<float> inputs, std::vector<float> targetOutputs) {
   // Loop forward
+  int layer = 0;
   for (std::vector<Layer>::iterator it = layers.begin(); it != layers.end(); ++it) {
+    layer++;
+    std::cout << "Layer: " << layer << '\n';
+    std::cout << "Inputs test: " << inputs[0] << '\n';
     inputs = it->feedForward(inputs);
   }
 
@@ -78,7 +79,10 @@ float Network::train(std::vector<float> inputs, std::vector<float> targetOutputs
 
   // Loop back and stop before input layer
   for (std::vector<Layer>::reverse_iterator rt = layers.rbegin(); rt != layers.rend() - 1; ++rt) {
+    std::cout << "Layer: " << layer << '\n';
     deltinis = rt->backPropegation(deltinis);
+    rt-> printLinks();
+    layer--;
   }
   return totalError;
 }
