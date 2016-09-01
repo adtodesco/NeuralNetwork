@@ -21,6 +21,7 @@ private:
 
   void setInputs(std::vector<float> in) { inputs = in; }
 
+  float randomFloat();
   float calculateWeightedInput(std::vector<Link> inputLinks);
   std::vector<float> calculateDeltinis();
   std::vector<float> getInputs() { return inputs; }

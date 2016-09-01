@@ -1,5 +1,13 @@
 #include "Layer.h"
 
+// Generate random float for initial weight
+float Layer::randomFloat() {
+  int randInt = rand() % (INITIALWEIGHTRANGE * 1000) - (INITIALWEIGHTRANGE * 500);
+  float randFl = (float) randInt / 1000;
+  //return randFl;
+  return 0.1;
+}
+
 // Public constructor
 Layer::Layer(int numNodes, int numPrevNodes)
 {
@@ -18,7 +26,7 @@ Layer::Layer(int numNodes, int numPrevNodes)
       links.push_back(newVector);
       // Push back numPrevNodes + 1 to incorperate bias node
       for (int pn = 0; pn < numPrevNodes + 1; pn++) {
-	Link newLink = Link(INITIALWEIGHT);
+	Link newLink = Link(randomFloat());
 	links[n].push_back(newLink);
       }
     }
