@@ -82,3 +82,17 @@ float Network::train(std::vector<float> inputs, std::vector<float> targetOutputs
   }
   return totalError;
 }
+
+// Writes neural network weights to file
+void Network::writeWeightFile(std::string weightsDir, std::string baseName) {
+  time_t t = std::time(0);
+  struct tm * now = localtime( & t);
+  std::string ymd = std::to_string(now->tm_year + 1900) + '-' + std::to_string(now->tm_mon + 1) + '-' + std::to_string(now->tm_mday);
+  std::string hms = std::to_string(now->tm_hour) + ':' + std::to_string(now->tm_min) + ':' + std::to_string(now->tm_sec);
+  std::ofstream weightFile;
+  std::string filename = weightsDir + baseName + '-' + ymd + '-' + hms + ".csv"; 
+  // Check that filename is unique.  Append tag if not i.e. weights.csv opposed to weights.csv
+  weightFile.open(filename);
+  weightFile << "Test\n";
+  weightFile.close();
+}

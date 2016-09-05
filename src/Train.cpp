@@ -3,7 +3,14 @@
 
 #include "Network.h"
 
-int main()
+// Returns the path to the default weights directory
+std::string getWeightsDir(char* argvZero) {
+  std::string executablePath = realpath(argvZero, NULL);
+  size_t index = executablePath.rfind('/', executablePath.rfind('/') - 1);
+  return executablePath.substr(0, index) + "/files/weights";
+}
+
+int main(int argc, char* argv[])
 {
   Network myNeuralNet = Network(2, 5, 2, 1);
   //Network myNeuralNet = Network(10, 5, 7, 1);
@@ -16,10 +23,14 @@ int main()
   std::vector<float> inputVec (inputArr, inputArr + sizeof(inputArr) / sizeof(inputArr[0]) );
   std::vector<float> outputVec (outputArr, outputArr + sizeof(outputArr) / sizeof(outputArr[0]) );
 
+  std::cout << "Weights directory: " << getWeightsDir(argv[0]) << '\n';
+
+  myNeuralNet.writeWeightFile(getWeightsDir(argv[0]));
+
   float totalError = 1.0;
   float prevTotalError = totalError;
   int iterations = 0;
-  while (totalError > 0.0001) {
+/*  while (totalError > 0.0001) {
   //for (int i = 0; i < 10; i++) {
     prevTotalError = totalError;
     iterations++;
@@ -28,6 +39,6 @@ int main()
     std::cout << "===============\n";
     totalError = myNeuralNet.train(inputVec, outputVec);
     std::cout << "totalError: " << totalError << " prevTotalError " << prevTotalError << '\n';
-  }
+  }*/
   return 0;
 }

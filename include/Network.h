@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #include "Layer.h"
 
@@ -19,7 +20,7 @@ public:
   void initNetwork();
 
   float train(std::vector<float> inputs, std::vector<float> targetOutputs);
-  void writeWeights();
+  void writeWeightFile(std::string weightsDir, std::string baseName = "weights");
   
   int getNumInputNodes() { return numInputNodes; }
   int getNumOutputNodes() { return numOutputNodes; }
