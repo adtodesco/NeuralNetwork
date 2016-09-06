@@ -34,6 +34,7 @@ public:
 
   int getNumNodes() { return numNodes; }
   int getNumPrevNodes() { return numPrevNodes; }
+  std::vector< std::vector<Link> > getLinks() { return links; }
 
   std::vector<float> feedForward(std::vector<float> in); 
   std::vector<float> backPropegation(std::vector<float> deltinis);

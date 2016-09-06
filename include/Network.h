@@ -12,9 +12,11 @@ class Network
 private:
   int numInputNodes, numOutputNodes, numHiddenNodes, numHiddenLayers;
   std::vector<Layer> layers;
+
   float calculateTotalError(std::vector<float> actualOutputs, std::vector<float> targetOutputs);
   std::vector<float> calculateInitialDeltinis(std::vector<float> actualOutputs, std::vector<float> targetOutputs);
-
+  bool fileExists(std::string filename);
+  std::string intToString(int i);
 public:
   Network(int in, int hid, int out, int lay);
   void initNetwork();

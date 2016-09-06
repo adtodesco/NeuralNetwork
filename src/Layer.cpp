@@ -112,7 +112,7 @@ void Layer::printNodes()
 {
   std::cout << "===========================\n";
   for (std::vector<Node>::iterator it = nodes.begin() ; it != nodes.end(); ++it) {
-    std::cout << " Node: " << it - nodes.begin() << " = " << it->getValue() << '\n';
+    std::cout << " Node: " << it - nodes.begin() << " = " << it->getValue() << std::endl;
   }
 }
 
@@ -122,7 +122,7 @@ void Layer::printLinks()
   std::cout << "===========================\n";
   for (int n = 0; n < getNumNodes(); n++) {
     for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
-      std::cout << " Link: " << pn << "->" << n << " = " << links[n][pn].getWeight() << '\n';
+      std::cout << " Link: " << pn << "->" << n << " = " << links[n][pn].getWeight() << std::endl;
     }
   }
 }

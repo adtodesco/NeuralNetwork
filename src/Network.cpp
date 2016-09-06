@@ -48,11 +48,11 @@ float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector
   for (int n = 0; n < actualOutputs.size(); n++) {
     error = 0.5 * pow((targetOutputs[n] - actualOutputs[n]), 2);
     totalError = totalError + error;
-    std::cout << "Output Node " << n << ":\n";
-    std::cout << "  Target: " << targetOutputs[n] << " Actual: " << actualOutputs[n] << '\n';
-    std::cout << "  Error: " << error << '\n';
+    std::cout << "Output Node " << n << ':' << std::endl;
+    std::cout << "  Target: " << targetOutputs[n] << " Actual: " << actualOutputs[n] << std::endl;
+    std::cout << "  Error: " << error << std::endl;
   }
-  std::cout << "Total Error: " << totalError << '\n';
+  std::cout << "Total Error: " << totalError << std::endl;
   return totalError;
 }
 
@@ -83,16 +83,57 @@ float Network::train(std::vector<float> inputs, std::vector<float> targetOutputs
   return totalError;
 }
 
+// Check for file existance
+bool Network::fileExists(std::string filename) {
+  std::ifstream f(filename);
+  return f.good();
+}
+
+// Return 3-digit string from integer
+std::string Network::intToString(int i) {
+  if (i < 10) {
+    return "00" + std::to_string(i);
+  } else if (i < 100) {
+    return "0" + std::to_string(i);
+  }
+  return std::to_string(i);
+}
+
 // Writes neural network weights to file
 void Network::writeWeightFile(std::string weightsDir, std::string baseName) {
-  time_t t = std::time(0);
+  // Check that filename is unique.  Append tag if already exists
+  int identifier = 1;
+  std::string filename = weightsDir + '/' + baseName + '-' + intToString(identifier) + ".csv"; 
+
+  while (fileExists(filename) == true) {
+    identifier++;
+    filename = weightsDir + '/' + baseName + '-' + intToString(identifier) + ".csv"; 
+  }
+ 
+ // Get time information for metadata
+  time_t t = time(0);
   struct tm * now = localtime( & t);
   std::string ymd = std::to_string(now->tm_year + 1900) + '-' + std::to_string(now->tm_mon + 1) + '-' + std::to_string(now->tm_mday);
   std::string hms = std::to_string(now->tm_hour) + ':' + std::to_string(now->tm_min) + ':' + std::to_string(now->tm_sec);
+
+  // Write weight file
   std::ofstream weightFile;
-  std::string filename = weightsDir + baseName + '-' + ymd + '-' + hms + ".csv"; 
-  // Check that filename is unique.  Append tag if not i.e. weights.csv opposed to weights.csv
   weightFile.open(filename);
-  weightFile << "Test\n";
+  weightFile << "Neural Network Weight File: " << baseName + '-' + intToString(identifier) + ".csv" << std::endl;
+  weightFile << "Created: " << ymd << ' ' << hms << std::endl;
+  weightFile << "Input Nodes: " << getNumInputNodes() << std::endl;
+  weightFile << "Hidden Nodes: " << getNumHiddenNodes() << std::endl;
+  weightFile << "Output Nodes: " << getNumOutputNodes() << std::endl;
+  weightFile << "Hidden Layers: " << getNumHiddenLayers() << std::endl; 
+  std::vector< std::vector<Link> > links;
+  for (std::vector<Layer>::iterator it = layers.begin() + 1; it != layers.end(); ++it) {
+    links = it->getLinks();
+    for (std::vector< std::vector<Link> >::iterator node = links.begin(); node != links.end(); ++node) {
+      for (std::vector<Link>::iterator prevNode = node->begin(); prevNode != node->end(); ++prevNode) {
+        weightFile << prevNode->getWeight() << ',';
+      }
+    }
+    weightFile << std::endl;
+  }
   weightFile.close();
 }
