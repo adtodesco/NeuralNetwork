@@ -29,6 +29,7 @@
 *.app
 bin/*
 
-# Build and libs
+# Build and libs and files
 build
 lib/*
+files/*

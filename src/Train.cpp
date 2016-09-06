@@ -24,18 +24,16 @@ int main(int argc, char* argv[])
   std::vector<float> outputVec (outputArr, outputArr + sizeof(outputArr) / sizeof(outputArr[0]) );
 
   float totalError = 1.0;
-  float prevTotalError = totalError;
   int iterations = 0;
-   while (totalError > 0.0001) {
-  //for (int i = 0; i < 10; i++) {
-    prevTotalError = totalError;
+  while (totalError > 0.0001) {
     iterations++;
-    std::cout << "===============\n";
-    std::cout << "Iteration: " << iterations << '\n';
-    std::cout << "===============\n";
     totalError = myNeuralNet.train(inputVec, outputVec);
-    std::cout << "totalError: " << totalError << " prevTotalError " << prevTotalError << '\n';
   }
+  std::cout << "===============\n";
+  std::cout << "Iterations: " << iterations << std::endl;
+  std::cout << "Total Error: " << totalError << std::endl;
+  std::cout << "===============\n";
+
   myNeuralNet.writeWeightFile(getWeightsDir(argv[0]));
   return 0;
 }

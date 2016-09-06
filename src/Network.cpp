@@ -48,11 +48,11 @@ float Network::calculateTotalError(std::vector<float> actualOutputs, std::vector
   for (int n = 0; n < actualOutputs.size(); n++) {
     error = 0.5 * pow((targetOutputs[n] - actualOutputs[n]), 2);
     totalError = totalError + error;
-    std::cout << "Output Node " << n << ':' << std::endl;
-    std::cout << "  Target: " << targetOutputs[n] << " Actual: " << actualOutputs[n] << std::endl;
-    std::cout << "  Error: " << error << std::endl;
+    //std::cout << "Output Node " << n << ':' << std::endl;
+    //std::cout << "  Target: " << targetOutputs[n] << " Actual: " << actualOutputs[n] << std::endl;
+    //std::cout << "  Error: " << error << std::endl;
   }
-  std::cout << "Total Error: " << totalError << std::endl;
+  //std::cout << "Total Error: " << totalError << std::endl;
   return totalError;
 }
 
