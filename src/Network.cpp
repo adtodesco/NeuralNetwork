@@ -1,6 +1,6 @@
 #include "Network.h"
 
-// Public constructor  
+// Public constructor - New network 
 Network::Network(int in, int hid, int out, int lay)
 {
   numInputNodes = in;
@@ -8,6 +8,11 @@ Network::Network(int in, int hid, int out, int lay)
   numOutputNodes = out;
   numHiddenLayers = lay;
   initNetwork();
+}
+
+// Public constructor - Network from weight file
+Network::Network(std::string weightFile) {
+  
 }
 
 // Initialize Network Layers

@@ -19,6 +19,7 @@ private:
   std::string intToString(int i);
 public:
   Network(int in, int hid, int out, int lay);
+  Network(std::string weightFile);
   void initNetwork();
 
   float train(std::vector<float> inputs, std::vector<float> targetOutputs);
