@@ -60,10 +60,9 @@ std::vector<std::string> parseOptions(int argc, char* argv[]) {
   return options;
 }
 
-int main(int argc, char* argv[])
-{
-
-  parseOptions(argc, argv);
+int main(int argc, char* argv[]) {
+  
+  std::vector< std::string > options = parseOptions(argc, argv);
 
   Network myNeuralNet = Network(2, 5, 2, 1);
   //Network myNeuralNet = Network(10, 5, 7, 1);
