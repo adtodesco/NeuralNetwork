@@ -7,24 +7,57 @@ std::string getWeightsDir(char* argvZero) {
   return executablePath.substr(0, index) + "/files/weights";
 }
 
+// Print options and usage
+void printHelp() {
+  std::cout << "  Usage: trainer <training_file> [options]\n\n"
+    "  Options:\n"
+    "  -h, --hidden-nodes\t Set number of hidden nodes\n"
+    "  -l, --hidden-layers\t Set number of hidden layers\n"
+    "      --help\t\t Print this message\n\n"
+    "  Example:\n"
+    "  ./bin/trainer training_set.tra -h 5 -l 1\n\n";
+}
+
 // Parse options
 std::vector<std::string> parseOptions(int argc, char* argv[]) {
-  std::string trainingFile = NULL;
+  std::string trainingFile = "NULL";
   std::string hiddenNodes = "0";
   std::string hiddenLayers = "0"; 
 
-  std::vector<std::string> returnString;
+  std::vector<std::string> options;
+  options.push_back(trainingFile);
+  options.push_back(hiddenNodes);
+  options.push_back(hiddenLayers);
   
-  for (int i = 0; i < argc; i++) {
-    std::cout << "argv[" << i << "] = " << argv[i] << std::endl;
-    switch(argv[i].to_s) {
-      case "-h", "--hidden-nodes":
-        std::cout << "Setting hidden nodes to " << argv[i] << std::endl;
-      case "-l", "--hidden-layers":
-        std::cout << "Setting hidden layers to " << argv[i] << std::endl;
+  for (int i = 1; i < argc; i++) {
+    //std::cout << "argv[" << i << "] = " << argv[i] << std::endl;
+    std::string arg = argv[i];
+    if (arg == "--help") {
+      printHelp();
+      exit(0);
+    }
+    else if (arg == "-h" || arg == "--hidden-nodes") {
+      //std::cout << "Setting hidden nodes to " << argv[i+1] << std::endl;
+      options[1] = argv[i+1];
+      i++;
+    }
+    else if (arg == "-l" || arg == "--hidden-layers") {
+      //std::cout << "Setting hidden layers to " << argv[i+1] << std::endl;
+      options[1] = argv[i+1];
+      i++;
+    }
+    else if (trainingFile == "NULL") {
+      //std::cout << "Setting training file to " << argv[i] << std::endl;
+      trainingFile = argv[i];
+      options[0] = argv[i];
+    }
+    else {
+      std::cout << "Invalid option \"" << argv[i] << "\"" << std::endl << std::endl;
+      printHelp();
+      exit(1);
     }
   }
-  return returnString;
+  return options;
 }
 
 int main(int argc, char* argv[])
