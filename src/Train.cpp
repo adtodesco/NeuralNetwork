@@ -18,8 +18,27 @@ void printHelp() {
     "  ./bin/trainer training_set.tra -h 5 -l 1\n\n";
 }
 
+// Validate option is an integer
+void isValInt(char* opt, char* val) {
+  std::string valStr = val;
+  try {
+    std::stoi(valStr);
+  }
+  catch (std::invalid_argument ia) {
+    std::cerr << "  ERROR: Invalid value '" << val << "' for option '"
+      << opt << "' (Value is not an Int)\n";
+   }
+}
+
 // Parse options
 std::vector<std::string> parseOptions(int argc, char* argv[]) {
+
+  if (argc < 2) {
+   std::cerr << "  ERROR: Training file was not provided.\n\n";
+   printHelp();
+   exit(1);
+  } 
+
   std::string trainingFile = "NULL";
   std::string hiddenNodes = "0";
   std::string hiddenLayers = "0"; 
@@ -37,22 +56,29 @@ std::vector<std::string> parseOptions(int argc, char* argv[]) {
       exit(0);
     }
     else if (arg == "-h" || arg == "--hidden-nodes") {
-      //std::cout << "Setting hidden nodes to " << argv[i+1] << std::endl;
+      isValInt(argv[i], argv[i+1]);
       options[1] = argv[i+1];
       i++;
     }
     else if (arg == "-l" || arg == "--hidden-layers") {
-      //std::cout << "Setting hidden layers to " << argv[i+1] << std::endl;
+      isValInt(argv[i], argv[i+1]);
       options[1] = argv[i+1];
       i++;
     }
     else if (trainingFile == "NULL") {
-      //std::cout << "Setting training file to " << argv[i] << std::endl;
       trainingFile = argv[i];
-      options[0] = argv[i];
+      std::ifstream tFile(trainingFile);
+      if (tFile.good()) {
+        options[0] = argv[i];
+      }
+      else {
+        std::cerr << "  ERROR: Training file " << trainingFile << " is "
+          "unreadable or does not exist\n";
+        exit(1);
+      }
     }
     else {
-      std::cout << "Invalid option \"" << argv[i] << "\"" << std::endl << std::endl;
+      std::cerr << "  ERROR: Invalid option \"" << argv[i] << "\"\n\n";
       printHelp();
       exit(1);
     }

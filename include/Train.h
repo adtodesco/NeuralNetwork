@@ -5,14 +5,17 @@
 #include <vector>
 
 #include "Network.h"
-#include "Optionparser.h"
 
 class Train
 {
 private:
+  std::string getWeightsDir(char* argvZero);
+  void printHelp();
+  void isValInt(char* opt, char* val);
+  std::vector<std::string> parseOptions(int argc, char* argv[]);
 
 public:
-
+  int main(int argc, char* argv[]);
 };
 
 #endif
