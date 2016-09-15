@@ -131,7 +131,9 @@ int main(int argc, char* argv[]) {
     std::getline(tFile, val, ',');
     outputVec[std::stoi(val)] = 0.99;
     // TODO: Error checking - make sure output vector index is int and in bounds of numOutputs
+    // Make sure hidden nodes > 0 if hidden layers are > 0
     
+    /*
     std::cout << "Input vector:\n";
     for (std::vector<float>::iterator it = inputVec.begin() ; it != inputVec.end(); ++it) {
       std::cout << *it << std::endl;
@@ -141,13 +143,15 @@ int main(int argc, char* argv[]) {
     for (std::vector<float>::iterator it = outputVec.begin() ; it != outputVec.end(); ++it) {
       std::cout << *it << std::endl;
     }
+    std::cout << std::endl;
+    */
 
     float totalError = 1.0;
     int iterations = 0;
     while (totalError > 0.001) {
       totalError = myNeuralNet.train(inputVec, outputVec);
       if (iterations % 100 == 0) {
-        std::cout << totalError << std::endl;
+        std::cout << "  " << totalError << std::endl;
       }
       iterations++;
     }
