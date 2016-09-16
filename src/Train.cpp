@@ -102,13 +102,37 @@ std::vector<std::string> parseOptions(int argc, char* argv[]) {
   return options;
 }
 
+// Check parameters
+void checkParams(std::vector< std::string > options) {
+  if (std::stoi(options[0]) <= 0) {
+    std::cerr << "  ERROR: Must have at least one input node.\n";
+    exit(1);
+  }
+  if (std::stoi(options[3]) <= 0) {
+    std::cerr << "  ERROR: Must have at least one output node.\n";
+    exit(1);
+  }
+  if (std::stoi(options[2]) > 0 && std::stoi(options[4]) <= 0) {
+    std::cerr << "  ERROR: Hidden layers are set to one or greater"
+      " but hidden nodes are set to zero.\n";
+    exit(1);
+  }
+  if (std::stoi(options[2]) <= 0 && std::stoi(options[4]) > 0) {
+    std::cerr << "  ERROR: Hidden nodes are set to one or greater"
+      " but hidden layers are set to zero.\n";
+    exit(1);
+  }
+  // Confirm number of inputs matches (first line - 1) of .tra file
+  // Get number of output nodes if unspecified
+}
+
+// Main method
 int main(int argc, char* argv[]) {
   
   std::vector< std::string > options = parseOptions(argc, argv);
+  checkParams(); 
 
-  // Check training file to confirm inputs, get outputs if not specified
-  // Warn user that getting outputs may take a while
-  // std::vector<int> getNodes(training file)
+  // Initialize network
   Network myNeuralNet = Network(std::stoi(options[0]),
                                 std::stoi(options[1]),
                                 std::stoi(options[2]),
@@ -130,9 +154,7 @@ int main(int argc, char* argv[]) {
     }
     std::getline(tFile, val, ',');
     outputVec[std::stoi(val)] = 0.99;
-    // TODO: Error checking - make sure output vector index is int and in bounds of numOutputs
-    // Make sure hidden nodes > 0 if hidden layers are > 0
-    
+   
     /*
     std::cout << "Input vector:\n";
     for (std::vector<float>::iterator it = inputVec.begin() ; it != inputVec.end(); ++it) {
