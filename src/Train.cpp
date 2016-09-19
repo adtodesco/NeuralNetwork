@@ -181,7 +181,6 @@ int main(int argc, char* argv[]) {
   std::string val;
 
   float totalError = 1.0;
-/*
   // Iterate through training file
   while (!tFile.eof()) {
     std::vector<float> inputVec;
@@ -197,5 +196,5 @@ int main(int argc, char* argv[]) {
     totalError = myNeuralNet.train(inputVec, outputVec);
   }
   myNeuralNet.writeWeightFile(getWeightsDir(argv[0]));
-*/  return 0;
+  return 0;
 }
