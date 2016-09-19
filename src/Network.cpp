@@ -12,7 +12,30 @@ Network::Network(int in, int hid, int out, int lay)
 
 // Public constructor - Network from weight file
 Network::Network(std::string weightFile) {
-  
+  std::ifstream wFile(weightFile);
+  if (!wFile.good()) {
+    std::cerr << "  ERROR: Weight file " << weightFile << " is "
+      "unreadable or does not exist\n";
+    exit(1);
+  }
+  std::string val;
+  std::getline(wFile, val);
+  std::getline(wFile, val);
+  std::getline(wFile, val, ':');
+  std::getline(wFile, val);
+  numInputNodes = std::stoi(val.substr(1, val.size() - 1));
+  std::getline(wFile, val, ':');
+  std::getline(wFile, val);
+  numHiddenNodes = std::stoi(val.substr(1, val.size() - 1));
+  std::getline(wFile, val, ':');
+  std::getline(wFile, val);
+  numOutputNodes = std::stoi(val.substr(1, val.size() - 1));
+  std::getline(wFile, val, ':');
+  std::getline(wFile, val);
+  numHiddenLayers = std::stoi(val.substr(1, val.size() - 1));
+  //while (!wFile.eof()) {
+         
+  //}
 }
 
 // Initialize Network Layers
