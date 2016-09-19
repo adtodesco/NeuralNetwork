@@ -1,4 +1,8 @@
-#include "Train.h"
+#include <iostream>
+#include <vector>
+#include <sys/stat.h>
+
+#include "Network.h"
 
 // Returns the path to the default weights directory
 std::string getWeightsDir(char* argvZero) {
@@ -32,14 +36,47 @@ void isValInt(char* opt, char* val) {
    }
 }
 
+// Print errors and return exit code 1
+void error(int errorCode, std::string info = "") {
+  switch (errorCode) {
+    case ERRFILE :
+      std::cerr << "  ERROR: Training file " << info << " is "
+        "unreadable or does not exist\n";
+    case ERRDIR :
+      std::cerr << " ERROR: Train class does not currently support "
+        "directories for training file argument\n";
+    case ERRNODE :
+      std::cerr << "  ERROR: Must have at least one " << info << " node.\n";
+    default: 
+      std::cerr << " ERROR: Unknown error.\n";
+  }
+  exit(1);
+}
+
+// Check parameters
+void checkParams(std::vector< std::string > options) {
+  if (std::stoi(options[0]) <= 0) {
+    error(ERRNODE, "input");
+  }
+  if (std::stoi(options[2]) <= 0) {
+    error(ERRNODE, "output");
+  }
+  if (std::stoi(options[1]) > 0 && std::stoi(options[3]) <= 0) {
+    std::cerr << "  ERROR: Hidden layers are set to one or greater"
+      " but hidden nodes are set to zero.\n";
+    exit(1);
+  }
+  if (std::stoi(options[1]) <= 0 && std::stoi(options[3]) > 0) {
+    std::cerr << "  ERROR: Hidden nodes are set to one or greater"
+      " but hidden layers are set to zero.\n";
+    exit(1);
+  }
+  // TODO: Confirm number of inputs matches (first line - 1) of .tra file
+  // Get number of output nodes if unspecified
+}
+
 // Parse options
 std::vector<std::string> parseOptions(int argc, char* argv[]) {
-
-  if (argc < 2) {
-   std::cerr << "  ERROR: Training file was not provided.\n\n";
-   printHelp();
-   exit(1);
-  } 
 
   std::string trainingFile = "NULL";
   std::string inputNodes = "0";
@@ -55,7 +92,6 @@ std::vector<std::string> parseOptions(int argc, char* argv[]) {
   options.push_back(trainingFile);
   
   for (int i = 1; i < argc; i++) {
-    //std::cout << "argv[" << i << "] = " << argv[i] << std::endl;
     std::string arg = argv[i];
     if (arg == "--help") {
       printHelp();
@@ -83,14 +119,25 @@ std::vector<std::string> parseOptions(int argc, char* argv[]) {
     }
     else if (trainingFile == "NULL") {
       trainingFile = argv[i];
-      std::ifstream tFile(trainingFile);
-      if (tFile.good()) {
-        options[4] = argv[i];
+      struct stat s;
+      if (stat(argv[i], &s) == 0) {
+        if (s.st_mode & S_IFDIR) {
+          std::ifstream tFile(trainingFile);
+          if (tFile.good()) {
+            options[4] = argv[i];
+          }
+          exit(1);
+        }
+        else if (s.st_mode & S_IFREG) {
+          // TODO: Support directories as training file argument
+          error(ERRDIR);
+        }
+        else {
+          error(ERRFILE, trainingFile);
+        }
       }
       else {
-        std::cerr << "  ERROR: Training file " << trainingFile << " is "
-          "unreadable or does not exist\n";
-        exit(1);
+        error(ERRFILE, trainingFile);
       }
     }
     else {
@@ -99,38 +146,21 @@ std::vector<std::string> parseOptions(int argc, char* argv[]) {
       exit(1);
     }
   }
-  return options;
-}
 
-// Check parameters
-void checkParams(std::vector< std::string > options) {
-  if (std::stoi(options[0]) <= 0) {
-    std::cerr << "  ERROR: Must have at least one input node.\n";
-    exit(1);
-  }
-  if (std::stoi(options[3]) <= 0) {
-    std::cerr << "  ERROR: Must have at least one output node.\n";
-    exit(1);
-  }
-  if (std::stoi(options[2]) > 0 && std::stoi(options[4]) <= 0) {
-    std::cerr << "  ERROR: Hidden layers are set to one or greater"
-      " but hidden nodes are set to zero.\n";
-    exit(1);
-  }
-  if (std::stoi(options[2]) <= 0 && std::stoi(options[4]) > 0) {
-    std::cerr << "  ERROR: Hidden nodes are set to one or greater"
-      " but hidden layers are set to zero.\n";
-    exit(1);
-  }
-  // Confirm number of inputs matches (first line - 1) of .tra file
-  // Get number of output nodes if unspecified
+  if (trainingFile == "NULL") {
+   std::cerr << "  ERROR: Training file was not provided.\n\n";
+   printHelp();
+   exit(1);
+  } 
+
+  checkParams(options); 
+  return options;
 }
 
 // Main method
 int main(int argc, char* argv[]) {
-  
+
   std::vector< std::string > options = parseOptions(argc, argv);
-  checkParams(); 
 
   // Initialize network
   Network myNeuralNet = Network(std::stoi(options[0]),
@@ -144,6 +174,9 @@ int main(int argc, char* argv[]) {
   std::ifstream tFile(options[4]);
   std::string val;
 
+  float totalError = 1.0;
+/*
+  // Iterate through training file
   while (!tFile.eof()) {
     std::vector<float> inputVec;
     std::vector<float> outputVec(numOutputs, 0.01);
@@ -155,34 +188,8 @@ int main(int argc, char* argv[]) {
     std::getline(tFile, val, ',');
     outputVec[std::stoi(val)] = 0.99;
    
-    /*
-    std::cout << "Input vector:\n";
-    for (std::vector<float>::iterator it = inputVec.begin() ; it != inputVec.end(); ++it) {
-      std::cout << *it << std::endl;
-    }
-   
-    std::cout << "Output vector:\n";
-    for (std::vector<float>::iterator it = outputVec.begin() ; it != outputVec.end(); ++it) {
-      std::cout << *it << std::endl;
-    }
-    std::cout << std::endl;
-    */
-
-    float totalError = 1.0;
-    int iterations = 0;
-    while (totalError > 0.001) {
-      totalError = myNeuralNet.train(inputVec, outputVec);
-      if (iterations % 100 == 0) {
-        std::cout << "  " << totalError << std::endl;
-      }
-      iterations++;
-    }
-    std::cout << "  ===============\n";
-    std::cout << "  Iterations: " << iterations << std::endl;
-    std::cout << "  Total Error: " << totalError << std::endl;
-    std::cout << "  ===============\n";
- }
-
+    totalError = myNeuralNet.train(inputVec, outputVec);
+  }
   myNeuralNet.writeWeightFile(getWeightsDir(argv[0]));
-  return 0;
+*/  return 0;
 }
