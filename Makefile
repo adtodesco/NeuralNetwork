@@ -1,34 +1,39 @@
 CC := g++ # This is the main compiler
 # CC := clang --analyze # and comment out the linker last line for sanity
-SRCDIR := src
-BUILDDIR := build
-TARGET := bin/tester
+SRC_DIR := src
+BUILD_DIR := build
+TRAIN_NAME := trainer
+TEST_NAME := tester
+TRAIN_TARGET := bin/$(TRAIN_NAME)
+TEST_TARGET := bin/$(TEST_NAME)
  
-SRCEXT := cpp
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+SRC_EXT := cpp
+SOURCES := $(wildcard src/*.cpp)
+TRAIN_SOURCES := $(filter-out src/Test.cpp, $(SOURCES))
+TEST_SOURCES := $(filter-out src/Train.cpp, $(SOURCES))
+TRAIN_OBJECTS := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(TRAIN_SOURCES:.$(SRC_EXT)=.o))
+TEST_OBJECTS := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(TEST_SOURCES:.$(SRC_EXT)=.o))
 CFLAGS := -g # -Wall
 #LIB := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
 INC := -I include
 
-$(TARGET): $(OBJECTS)
-	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+all: $(TRAIN_NAME) $(TEST_NAME)
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	@mkdir -p $(BUILDDIR)
+$(TRAIN_NAME): $(TRAIN_OBJECTS)
+	@echo " Linking..."
+	@echo " $(CC) $^ -o $(TRAIN_TARGET) $(LIB)"; $(CC) $^ -o $(TRAIN_TARGET) $(LIB)
+
+$(TEST_NAME): $(TEST_OBJECTS)
+	@echo " Linking..."
+	@echo " $(CC) $^ -o $(TEST_TARGET) $(LIB)"; $(CC) $^ -o $(TEST_TARGET) $(LIB)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.$(SRC_EXT)
+	@mkdir -p $(BUILD_DIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 clean:
 	@echo " Cleaning..."; 
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
-
-# Tests
-tester:
-	$(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester
-
-# Spikes
-ticket:
-	$(CC) $(CFLAGS) spikes/ticket.cpp $(INC) $(LIB) -o bin/ticket
+	@echo " $(RM) -r $(BUILD_DIR) $(TRAIN_TARGET)"; $(RM) -r $(BUILD_DIR) $(TRAIN_TARGET)
+	@echo " $(RM) -r $(BUILD_DIR) $(TEST_TARGET)"; $(RM) -r $(BUILD_DIR) $(TEST_TARGET)
 
 .PHONY: clean
