@@ -13,6 +13,9 @@ private:
   int numInputNodes, numOutputNodes, numHiddenNodes, numHiddenLayers;
   std::vector<Layer> layers;
 
+  int parseHeader(std::string line);
+  std::vector<float> parseWeights(std::string line);
+
   float calculateTotalError(std::vector<float> actualOutputs, std::vector<float> targetOutputs);
   std::vector<float> calculateInitialDeltinis(std::vector<float> actualOutputs, std::vector<float> targetOutputs);
   bool fileExists(std::string filename);
@@ -20,7 +23,7 @@ private:
 public:
   Network(int in, int hid, int out, int lay);
   Network(std::string weightFile);
-  void initNetwork();
+  void initNetwork(std::vector< std::vector<float> > weights);
 
   float train(std::vector<float> inputs, std::vector<float> targetOutputs);
   void writeWeightFile(std::string weightsDir, std::string baseName = "weights");

@@ -27,7 +27,7 @@ private:
   std::vector<float> getInputs() { return inputs; }
 
 public:
-  Layer(int numNodes, int numPrevNodes);
+  Layer(int numNodes, int numPrevNodes, std::vector<float> weights);
 
   void setNumNodes(int nNodes) { numNodes = nNodes; }
   void setNumPrevNodes(int nPrevNodes) { numPrevNodes = nPrevNodes; }
