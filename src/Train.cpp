@@ -42,13 +42,17 @@ void error(int errorCode, std::string info = "") {
     case ERRFILE :
       std::cerr << "  ERROR: Training file " << info << " is "
         "unreadable or does not exist\n";
+      break;
     case ERRDIR :
       std::cerr << " ERROR: Train class does not currently support "
         "directories for training file argument\n";
+      break;
     case ERRNODE :
       std::cerr << "  ERROR: Must have at least one " << info << " node.\n";
+      break;
     default: 
       std::cerr << " ERROR: Unknown error.\n";
+      break;
   }
   exit(1);
 }
@@ -121,14 +125,16 @@ std::vector<std::string> parseOptions(int argc, char* argv[]) {
       trainingFile = argv[i];
       struct stat s;
       if (stat(argv[i], &s) == 0) {
-        if (s.st_mode & S_IFDIR) {
+        if (s.st_mode & S_IFREG) {
           std::ifstream tFile(trainingFile);
           if (tFile.good()) {
             options[4] = argv[i];
           }
-          exit(1);
+          else {
+            error(ERRFILE, trainingFile);
+          }
         }
-        else if (s.st_mode & S_IFREG) {
+        else if (s.st_mode & S_IFDIR) {
           // TODO: Support directories as training file argument
           error(ERRDIR);
         }
