@@ -32,7 +32,7 @@ Layer::Layer(int numNodes, int numPrevNodes, std::vector<float> weights)
         }
         else {
           Link newLink = Link(weights[w]);
-	  links[n].push_back(newLink);
+          links[n].push_back(newLink);
           w++;
         }
       }
