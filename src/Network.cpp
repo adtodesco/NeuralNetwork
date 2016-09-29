@@ -16,15 +16,13 @@ int Network::parseHeader(std::string line) {
   return std::stoi(line.substr(index + 2, line.size() - 1));
 }
 
+// Parses lines of weight file weights to return vector
 std::vector<float> Network::parseWeights(std::string line) {
   std::vector<float> weights;
-  while (true) {
+  while (line.size() > 0) {
     size_t index = line.find(',');
     weights.push_back(std::stof(line.substr(0, index)));
-    if (index + 2 > line.size() - 1) {
-      break;
-    }
-    line = line.substr(index + 2, line.size() - 1);
+    line = line.substr(index + 1, line.size() - 1);
   }
   return weights;
 }
