@@ -7,41 +7,84 @@ Network::Network(int in, int hid, int out, int lay)
   numHiddenNodes = hid;
   numOutputNodes = out;
   numHiddenLayers = lay;
-  initNetwork();
+  initNetwork(std::vector< std::vector<float> > (numHiddenLayers + 1, std::vector<float>()));
+}
+
+// Parses lines of weight file header to get metadata
+int Network::parseHeader(std::string line) {
+  size_t index = line.find(':');
+  return std::stoi(line.substr(index + 2, line.size() - 1));
+}
+
+// Parses lines of weight file weights to return vector
+std::vector<float> Network::parseWeights(std::string line) {
+  std::vector<float> weights;
+  while (line.size() > 0) {
+    size_t index = line.find(',');
+    weights.push_back(std::stof(line.substr(0, index)));
+    line = line.substr(index + 1, line.size() - 1);
+  }
+  return weights;
 }
 
 // Public constructor - Network from weight file
 Network::Network(std::string weightFile) {
-  
+  std::ifstream wFile(weightFile);
+  if (!wFile.good()) {
+    std::cerr << "  ERROR: Weight file " << weightFile << " is "
+      "unreadable or does not exist\n";
+    exit(1);
+  }
+
+  std::string val;
+  std::getline(wFile, val);
+  std::getline(wFile, val);
+  std::getline(wFile, val);
+  numInputNodes = parseHeader(val);
+  std::getline(wFile, val);
+  numHiddenNodes = parseHeader(val);
+  std::getline(wFile, val);
+  numOutputNodes = parseHeader(val);
+  std::getline(wFile, val);
+  numHiddenLayers = parseHeader(val);
+
+  std::vector< std::vector<float> > weights;
+  while (std::getline(wFile, val)) {
+    weights.push_back(parseWeights(val)); 
+  }
+
+  initNetwork(weights);
 }
 
 // Initialize Network Layers
-void Network::initNetwork()
+void Network::initNetwork(std::vector< std::vector<float> > weights)
 {
   // Initialize random seed
   srand(time(NULL));
 
   // Initialize input layer
-  Layer layer = Layer(getNumInputNodes(), 0);
-  layers.push_back(layer); 
+  Layer layer = Layer(getNumInputNodes(), 0, std::vector<float>());
+  layers.push_back(layer);
 
+  int l = 0;
   // Initialize hidden layers
   for (int hid = 0; hid < getNumHiddenLayers(); hid++) {
     if (hid == 0) { 
-      layer = Layer(getNumHiddenNodes(), getNumInputNodes());
+      layer = Layer(getNumHiddenNodes(), getNumInputNodes(), weights[l]);
     }
     else {
-     layer = Layer(getNumHiddenNodes(), getNumHiddenNodes());
+     layer = Layer(getNumHiddenNodes(), getNumHiddenNodes(), weights[l]);
     }
     layers.push_back(layer);
+    l++;
   }
 
   // Initialize output leyer
   if (getNumHiddenNodes() == 0) {
-    layer = Layer(getNumOutputNodes(), getNumInputNodes());
+    layer = Layer(getNumOutputNodes(), getNumInputNodes(), weights[l]);
   }
   else {
-    layer = Layer(getNumOutputNodes(), getNumHiddenNodes());
+    layer = Layer(getNumOutputNodes(), getNumHiddenNodes(), weights[l]);
   }
   layers.push_back(layer);
 }

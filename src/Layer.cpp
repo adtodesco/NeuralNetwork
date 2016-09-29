@@ -8,7 +8,7 @@ float Layer::randomFloat() {
 }
 
 // Public constructor
-Layer::Layer(int numNodes, int numPrevNodes)
+Layer::Layer(int numNodes, int numPrevNodes, std::vector<float> weights)
 {
   setNumNodes(numNodes);
   setNumPrevNodes(numPrevNodes);
@@ -19,14 +19,22 @@ Layer::Layer(int numNodes, int numPrevNodes)
   }
   // Skip adding links to input layer
   if (numPrevNodes > 0) {
+    int w = 0;
     // Initialize links
     for (int n = 0; n < numNodes; n++) {
       std::vector<Link> newVector;
       links.push_back(newVector);
       // Push back numPrevNodes + 1 to incorperate bias node
       for (int pn = 0; pn < numPrevNodes + 1; pn++) {
-	Link newLink = Link(randomFloat());
-	links[n].push_back(newLink);
+        if (weights.empty() == true) {
+	  Link newLink = Link(randomFloat());
+	  links[n].push_back(newLink);
+        }
+        else {
+          Link newLink = Link(weights[w]);
+          links[n].push_back(newLink);
+          w++;
+        }
       }
     }
   }
