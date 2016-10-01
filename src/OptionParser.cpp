@@ -1,11 +1,5 @@
 #include "OptionParser.h"
 
-// Public constructor
-OptionParser::OptionParser(std::vector<std::string> args, int type) {
-  arguments = args;
-  cmdtype = type;
-}
-
 // Print options and usage
 void OptionParser::printHelp() {
   switch (cmdtype) {
@@ -201,4 +195,10 @@ std::unordered_map<int, std::string> OptionParser::getOptions() {
     break;
   }
   return options;
+}
+
+// Public constructor
+OptionParser::OptionParser(std::vector<std::string> args, int type) {
+  arguments = args;
+  cmdtype = type;
 }

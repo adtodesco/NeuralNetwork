@@ -1,41 +1,21 @@
 #include "Layer.h"
 
-// Generate random float for initial weight
-float Layer::randomFloat() {
-  int randInt = rand() % (INITIALWEIGHTRANGE * 1000) - (INITIALWEIGHTRANGE * 500);
-  float randFl = (float) randInt / 1000;
-  return randFl;
+// Print node values in the layer
+void Layer::printNodes()
+{
+  std::cout << "===========================\n";
+  for (std::vector<Node>::iterator it = nodes.begin() ; it != nodes.end(); ++it) {
+    std::cout << " Node: " << it - nodes.begin() << " = " << it->getValue() << std::endl;
+  }
 }
 
-// Public constructor
-Layer::Layer(int numNodes, int numPrevNodes, std::vector<float> weights)
+// Print link weights in the layer
+void Layer::printLinks()
 {
-  setNumNodes(numNodes);
-  setNumPrevNodes(numPrevNodes);
-  // Initialize nodes
-  for (int n = 0; n < numNodes; n++) {
-    Node newNode = Node(0);
-    nodes.push_back(newNode);
-  }
-  // Skip adding links to input layer
-  if (numPrevNodes > 0) {
-    int w = 0;
-    // Initialize links
-    for (int n = 0; n < numNodes; n++) {
-      std::vector<Link> newVector;
-      links.push_back(newVector);
-      // Push back numPrevNodes + 1 to incorperate bias node
-      for (int pn = 0; pn < numPrevNodes + 1; pn++) {
-        if (weights.empty() == true) {
-	  Link newLink = Link(randomFloat());
-	  links[n].push_back(newLink);
-        }
-        else {
-          Link newLink = Link(weights[w]);
-          links[n].push_back(newLink);
-          w++;
-        }
-      }
+  std::cout << "===========================\n";
+  for (int n = 0; n < getNumNodes(); n++) {
+    for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
+      std::cout << " Link: " << pn << "->" << n << " = " << links[n][pn].getWeight() << std::endl;
     }
   }
 }
@@ -115,22 +95,42 @@ std::vector<float> Layer::backPropegation(std::vector<float> deltinis) {
     return deltinis; 
 }
 
-// Print node values in the layer
-void Layer::printNodes()
-{
-  std::cout << "===========================\n";
-  for (std::vector<Node>::iterator it = nodes.begin() ; it != nodes.end(); ++it) {
-    std::cout << " Node: " << it - nodes.begin() << " = " << it->getValue() << std::endl;
-  }
+// Generate random float for initial weight
+float Layer::randomFloat() {
+  int randInt = rand() % (INITIALWEIGHTRANGE * 1000) - (INITIALWEIGHTRANGE * 500);
+  float randFl = (float) randInt / 1000;
+  return randFl;
 }
 
-// Print link weights in the layer
-void Layer::printLinks()
+// Public constructor
+Layer::Layer(int numNodes, int numPrevNodes, std::vector<float> weights)
 {
-  std::cout << "===========================\n";
-  for (int n = 0; n < getNumNodes(); n++) {
-    for (int pn = 0; pn < getNumPrevNodes() + 1; pn++) {
-      std::cout << " Link: " << pn << "->" << n << " = " << links[n][pn].getWeight() << std::endl;
+  setNumNodes(numNodes);
+  setNumPrevNodes(numPrevNodes);
+  // Initialize nodes
+  for (int n = 0; n < numNodes; n++) {
+    Node newNode = Node(0);
+    nodes.push_back(newNode);
+  }
+  // Skip adding links to input layer
+  if (numPrevNodes > 0) {
+    int w = 0;
+    // Initialize links
+    for (int n = 0; n < numNodes; n++) {
+      std::vector<Link> newVector;
+      links.push_back(newVector);
+      // Push back numPrevNodes + 1 to incorperate bias node
+      for (int pn = 0; pn < numPrevNodes + 1; pn++) {
+        if (weights.empty() == true) {
+	  Link newLink = Link(randomFloat());
+	  links[n].push_back(newLink);
+        }
+        else {
+          Link newLink = Link(weights[w]);
+          links[n].push_back(newLink);
+          w++;
+        }
+      }
     }
   }
 }
