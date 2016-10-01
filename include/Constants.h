@@ -9,4 +9,7 @@ int const ERRFILE = 0;
 int const ERRDIR = 1;
 int const ERRNODE = 2;
 
+int const TRAIN = 0;
+int const TEST = 1;
+
 #endif
