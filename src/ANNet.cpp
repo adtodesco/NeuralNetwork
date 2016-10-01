@@ -6,6 +6,11 @@
 #include "Network.h"
 #include "Constants.h"
 
+// Print usage
+void printUsage() {
+
+}
+
 // Returns the path to the default weights directory
 std::string getWeightsDir(char* argvZero) {
   std::string executablePath = realpath(argvZero, NULL);
@@ -17,17 +22,17 @@ std::string getWeightsDir(char* argvZero) {
 int main(int argc, char* argv[]) {
 
   // Test for proper annet command
-  if (argc < 2 && (strcmp(argv[1], "train") == 0 || strcmp(argv[1], "test") == 0 )) {
+  if (argc < 2 || (strcmp(argv[1], "train") != 0 && strcmp(argv[1], "test") != 0 )) {
     std::cerr << "Command not recognized.\n";
     //printUsage();
     exit(1);
   }
 
-  std::vector< std::string > arguments(argv + 1, argv + argc); 
+  std::vector<std::string> arguments(argv + 2, argv + argc); 
   int cmdType = strcmp(argv[1], "train") ? TRAIN : TEST;
 
   OptionParser parser = OptionParser(arguments, cmdType);
-  std::vector< std::string > options = parser.getOptions();
+  std::unordered_map<int, std::string> options = parser.getOptions();
 
 /*
 

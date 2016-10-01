@@ -2,30 +2,30 @@
 #define OPTIONPARSER_H
 
 #include <iostream>
-#include <vector> //Temporary?
-#include <fstream> //Temporary?
-#include <sys/stat.h>
+#include <vector>
+#include <unordered_map>
+#include <fstream> 
 
 #include "Constants.h"
 
 class OptionParser
 {
 private:
-  bool isValInt(std::string opt, std::string val);
-
   void error(int errorCode, std::string info = "");
-  void checkParams(std::vector< std::string > options);
+  void printHelp();
+  void testNodes(std::unordered_map<int, std::string> options);
+  std::string testInt(std::string val);
+  std::string testFile(std::string val);
 
-  std::vector< std::string > getTestOptions();
-  std::vector< std::string > getTrainOptions();
+  std::unordered_map<int, std::string> getTestOptions();
+  std::unordered_map<int, std::string> getTrainOptions();
 
   int cmdtype;
-  std::vector< std::string > arguments;
+  std::vector<std::string> arguments;
 public:
-  OptionParser(std::vector< std::string > args, int type);
+  OptionParser(std::vector<std::string> args, int type);
 
-  std::vector< std::string > getOptions();
-  void printHelp();
+  std::unordered_map<int, std::string> getOptions();
 };
 
 #endif

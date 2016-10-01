@@ -8,8 +8,20 @@ int const INITIALWEIGHTRANGE = 1;
 int const ERRFILE = 0;
 int const ERRDIR = 1;
 int const ERRNODE = 2;
+int const ERRNOTINT = 3;
+int const ERROPT = 4;
+int const ERRNOFILE = 5;
+int const ERRNOHLAYERS = 6;
+int const ERRNOHNODES = 7;
 
 int const TRAIN = 0;
 int const TEST = 1;
+
+int const INODES = 0;
+int const HNODES = 1;
+int const ONODES = 2;
+int const HLAYERS = 3;
+int const TRFILE = 4;
+int const TEFILE = 5;
 
 #endif
