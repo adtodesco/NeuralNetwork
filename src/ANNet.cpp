@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
   }
 
   std::vector<std::string> arguments(argv + 2, argv + argc); 
-  int cmdType = strcmp(argv[1], "train") ? TRAIN : TEST;
+  int cmdType = (strcmp(argv[1], "train") == 0) ? TRAIN : TEST;
 
   OptionParser parser = OptionParser(arguments, cmdType);
   std::unordered_map<int, std::string> options = parser.getOptions();

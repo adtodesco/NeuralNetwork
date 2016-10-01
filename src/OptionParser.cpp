@@ -10,7 +10,7 @@ OptionParser::OptionParser(std::vector<std::string> args, int type) {
 void OptionParser::printHelp() {
   switch (cmdtype) {
   case TRAIN:
-    std::cout << "  Usage: trainer <training_file> [options]\n\n"
+    std::cout << "  Usage: annet train <training_file> [options]\n\n"
       "  Options:\n"
       "  -i, --input-nodes\t Set number of input nodes\n"
       "  -h, --hidden-nodes\t Set number of hidden nodes\n"
@@ -18,10 +18,14 @@ void OptionParser::printHelp() {
       "  -l, --hidden-layers\t Set number of hidden layers\n"
       "      --help\t\t Print this message\n\n"
       "  Example:\n"
-      "  ./bin/trainer training_set.tra -h 5 -l 1\n\n";
+      "  ./bin/annet train training_set.csv -h 5 -l 1\n\n";
     break;
   case TEST:
-    std::cout << " TEST COMMAND OPTION\n";
+    std::cout << "  Usage: annet test <testing_file> <weight_file>\n\n"
+      "  Options:\n"
+      "      --help\t\t Print this message\n\n"
+      "  Example:\n"
+      "  ./bin/annet test testing_set.csv weights.csv\n\n";
     break;
   }
 }
@@ -30,21 +34,24 @@ void OptionParser::printHelp() {
 void OptionParser::error(int errorCode, std::string info) {
   switch (errorCode) {
   case ERRFILE :
-    std::cerr << "  ERROR: Training file " << info << " is "
-                 "unreadable or does not exist\n";
+    std::cerr << "  ERROR: File " << info << " is unreadable"
+                 " or does not exist.\n";
     break;
   case ERRDIR :
-    std::cerr << "  ERROR: Train class does not currently support "
-                 "directories for training file argument\n";
+    std::cerr << "  ERROR: Train class does not currently support"
+                 " directories for training file argument.\n";
     break;
   case ERRNODE :
-    std::cerr << "  ERROR: Must have at least one " << info << " node.\n";
+    std::cerr << "  ERROR: Invalid value for " << info << " nodes.\n";
+    break;
+  case ERRLAYER :
+    std::cerr << "  ERROR: Invalid value for " << info << " layers.\n";
     break;
   case ERRNOTINT :
     std::cerr << "  ERROR: Expected argument of type int: " << info << std::endl;
     break;
   case ERROPT :
-    std::cerr << "  ERROR: Invalid option \"" << info << "\"\n\n";
+    std::cerr << "  ERROR: Invalid option \"" << info << "\".\n\n";
     printHelp();
     break;
   case ERRNOFILE :
@@ -93,6 +100,12 @@ void OptionParser::testNodes(std::unordered_map<int, std::string> options) {
   if (std::stoi(options[ONODES]) <= 0) {
     error(ERRNODE, "output");
   }
+  if (std::stoi(options[HNODES]) < 0) {
+    error(ERRNODE, "hidden");
+  }
+  if (std::stoi(options[HLAYERS]) < 0) {
+    error(ERRLAYER, "hidden");
+  }
   if (std::stoi(options[HNODES]) > 0 && std::stoi(options[HLAYERS]) <= 0) {
     error(ERRNOHNODES);
   }
@@ -101,12 +114,36 @@ void OptionParser::testNodes(std::unordered_map<int, std::string> options) {
   }
 }
 
+// Parse test options
 std::unordered_map<int, std::string> OptionParser::getTestOptions() {
   std::unordered_map<int, std::string> options;
+  for (int i = 0; i < arguments.size(); i++) {
+    std::string arg = arguments[i];
+    if (arg == "--help") {
+      printHelp();
+      exit(0);
+    }
+    else if (options.count(TFILE) == 0) {
+      options[TFILE] = testFile(arg);
+    }
+    else if (options.count(WFILE) == 0) {
+      options[WFILE] = testFile(arg);
+    }
+    else {
+      error(ERROPT, arg);
+    }
+  }
+
+  if (options.count(TFILE) == 0) {
+    error(ERRNOFILE, "Testing");
+  } 
+  if (options.count(WFILE) == 0) {
+    error(ERRNOFILE, "Weight");
+  }
   return options;
 }
 
-// Parse options
+// Parse train options
 std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
 
   std::unordered_map<int, std::string> options;
@@ -137,21 +174,22 @@ std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
       options[HLAYERS] = testInt(arguments[i+1]);
       i++;
     }
-    else if (options.count(TRFILE) == 0) {
-      options[TRFILE] = testFile(arguments[i]);
+    else if (options.count(TFILE) == 0) {
+      options[TFILE] = testFile(arg);
     }
     else {
       error(ERROPT, arg);
     }
   }
 
-  if (options.count(TRFILE) == 0) {
+  if (options.count(TFILE) == 0) {
    error(ERRNOFILE, "Training");
   } 
   testNodes(options);
   return options;
 }
 
+// Return options
 std::unordered_map<int, std::string> OptionParser::getOptions() {
   std::unordered_map<int, std::string> options;
   switch (cmdtype) {
