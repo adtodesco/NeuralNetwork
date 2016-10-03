@@ -21,7 +21,8 @@ private:
   std::vector< std::vector<float> > weights;
   bool weightFileSet; 
 public:
-  WeightFile(std::string weightFile = "");
+  WeightFile(std::string weightFile);
+  WeightFile(int in, int hid, int out, int lay, std::vector< std::vector<float> > wei); 
 
   void setWeightFile(std::string weightFile);
   void writeWeightFile(std::string weightsDir, std::string baseName);

@@ -2,43 +2,29 @@
 
 // Writes neural network weights to file
 void Network::writeWeightFile(std::string weightsDir, std::string baseName) {
-/*
-  // Check that filename is unique.  Append tag if already exists
-  int identifier = 1;
-  std::string filename = weightsDir + '/' + baseName + '-' + intToString(identifier) + ".csv"; 
 
-  while (fileExists(filename) == true) {
-    identifier++;
-    filename = weightsDir + '/' + baseName + '-' + intToString(identifier) + ".csv"; 
-  }
- 
- // Get time information for metadata
-  time_t t = time(0);
-  struct tm * now = localtime( & t);
-  std::string ymd = std::to_string(now->tm_year + 1900) + '-' + std::to_string(now->tm_mon + 1) + '-' + std::to_string(now->tm_mday);
-  std::string hms = std::to_string(now->tm_hour) + ':' + std::to_string(now->tm_min) + ':' + std::to_string(now->tm_sec);
-
-  // Write weight file
-  std::ofstream weightFile;
-  weightFile.open(filename);
-  weightFile << "Neural Network Weight File: " << baseName + '-' + intToString(identifier) + ".csv" << std::endl;
-  weightFile << "Created: " << ymd << ' ' << hms << std::endl;
-  weightFile << "Input Nodes: " << getNumInputNodes() << std::endl;
-  weightFile << "Hidden Nodes: " << getNumHiddenNodes() << std::endl;
-  weightFile << "Output Nodes: " << getNumOutputNodes() << std::endl;
-  weightFile << "Hidden Layers: " << getNumHiddenLayers() << std::endl; 
+  std::vector< std::vector<float> > weights;
+  int lay = 0;
   std::vector< std::vector<Link> > links;
+
+  // Build weights
   for (std::vector<Layer>::iterator it = layers.begin() + 1; it != layers.end(); ++it) {
     links = it->getLinks();
     for (std::vector< std::vector<Link> >::iterator node = links.begin(); node != links.end(); ++node) {
       for (std::vector<Link>::iterator prevNode = node->begin(); prevNode != node->end(); ++prevNode) {
-        weightFile << prevNode->getWeight() << ',';
+        weights[lay].push_back(prevNode->getWeight());
       }
     }
-    weightFile << std::endl;
+    lay++;
   }
-  weightFile.close();
-  */
+
+  WeightFile file = WeightFile(getNumInputNodes(),
+                               getNumHiddenNodes(),
+                               getNumOutputNodes(),
+                               getNumHiddenLayers(),
+                               weights);
+
+  file.writeWeightFile(weightsDir, baseName);
 }
 
 // Calculate total error of the Network outputs w.r.t. the target outputs
@@ -138,6 +124,5 @@ Network::Network(std::string weightFile) {
   numOutputNodes = wFile.getNumOutputNodes();
   numHiddenLayers = wFile.getNumHiddenLayers();
   std::vector< std::vector<float> > weights = wFile.getWeights();
-
   initNetwork(weights);
 }

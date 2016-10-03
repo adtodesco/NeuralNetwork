@@ -19,7 +19,7 @@ std::string WeightFile::intToString(int i) {
 // Writes neural network weights to file
 void WeightFile::writeWeightFile(std::string weightsDir, std::string baseName) {
   // Check that filename is unique.  Append tag if already exists
-/*  int identifier = 1;
+  int identifier = 1;
   std::string filename = weightsDir + '/' + baseName + '-' + intToString(identifier) + ".csv"; 
 
   while (fileExists(filename) == true) {
@@ -42,17 +42,13 @@ void WeightFile::writeWeightFile(std::string weightsDir, std::string baseName) {
   weightFile << "Hidden Nodes: " << getNumHiddenNodes() << std::endl;
   weightFile << "Output Nodes: " << getNumOutputNodes() << std::endl;
   weightFile << "Hidden Layers: " << getNumHiddenLayers() << std::endl; 
-  std::vector< std::vector<Link> > links;
-  for (std::vector<Layer>::iterator it = layers.begin() + 1; it != layers.end(); ++it) {
-    links = it->getLinks();
-    for (std::vector< std::vector<Link> >::iterator node = links.begin(); node != links.end(); ++node) {
-      for (std::vector<Link>::iterator prevNode = node->begin(); prevNode != node->end(); ++prevNode) {
-        weightFile << prevNode->getWeight() << ',';
-      }
+  for (std::vector< std::vector<float> >::iterator it = weights.begin() + 1; it != weights.end(); ++it) {
+    for (std::vector<float>::iterator it = weights.begin() + 1; it != weights.end(); ++it) {
+      weightFile << weights << ',';
+      weightFile << std::endl;
     }
-    weightFile << std::endl;
   }
-  weightFile.close();*/
+  weightFile.close();
 }
 
 // Confirm that the weightFile has been set
@@ -146,4 +142,13 @@ WeightFile::WeightFile(std::string weightFile) {
   else {
     weightFileSet = false;
   } 
+}
+
+// Public constructor 
+WeightFile::WeightFile(int in, int hid, int out, int lay, std::vector< std::vector<float> > wei) {
+  numInputNodes = in;
+  numHiddenNodes = hid;
+  numOutputNodes = out;
+  numHiddenLayers = lay;
+  weights = wei;
 }
