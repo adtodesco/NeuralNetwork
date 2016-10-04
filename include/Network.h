@@ -23,7 +23,7 @@ public:
   Network(std::string weightFile);
   Network() {};
 
-  float test();
+  std::vector<float> test(std::vector<float> inputs, int output = -1);
   float train(std::vector<float> inputs, std::vector<float> targetOutputs);
   void writeWeightFile(std::string weightsDir, std::string baseName = "weights");
   

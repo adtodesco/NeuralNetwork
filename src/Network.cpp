@@ -52,9 +52,37 @@ std::vector<float> Network::calculateInitialDeltinis(std::vector<float> actualOu
   return deltinis;
 }
 
+// Print prediction
+void printTestResults(std::vector<float> outputs, int actualOutput) {
+  std::cout << "Test results: \n";
+  int o = 0;
+  int prediction = -1;
+  float predictionVal = 0.0;
+  for (std::vector<float>::iterator it = outputs.begin(); it != outputs.end(); ++it) {
+    std::cout << "  " << o << " = " << *it * 100 << std::endl;
+    if (*it > predictionVal) {
+      predictionVal = *it;
+      prediction = o;
+    }
+    o++;
+  }
+
+  std::cout << "  Predicted: " << prediction;
+  if (actualOutput >= 0) {
+    std::cout << " Actual: " << actualOutput;
+  }
+  std::cout << std::endl;
+}
+
 // Test network on a set of inputs and target outputs
-float Network::test() {
-  return 0.0;
+std::vector<float> Network::test(std::vector<float> inputs, int output) {
+  // Loop forward
+  for (std::vector<Layer>::iterator it = layers.begin(); it != layers.end(); ++it) {
+    inputs = it->feedForward(inputs);
+  }
+  printTestResults(inputs, output);
+  // Final inputs are actual outputs
+  return inputs;
 }
 
 // Train Network on a set of inputs and target outputs

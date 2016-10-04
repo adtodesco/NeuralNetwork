@@ -53,6 +53,7 @@ int main(int argc, char* argv[]) {
   std::string val;
 
   float totalError = 1.0;
+  std::vector<float> outputVector;
   // Iterate through training file
   while (std::getline(tFile, val)) {
     std::vector<float> inputVec;
@@ -91,7 +92,7 @@ int main(int argc, char* argv[]) {
       totalError = myNeuralNet.train(inputVec, outputVec);
       break;
     case TEST :
-      std::cerr << "Test functionality not yet defined\n"; exit(1);
+      outputVector = myNeuralNet.test(inputVec, output);
       break;
     }
   }
