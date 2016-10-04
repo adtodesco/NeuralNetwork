@@ -35,10 +35,18 @@ int main(int argc, char* argv[]) {
   std::unordered_map<int, std::string> options = parser.getOptions();
 
   // Initialize network
-  Network myNeuralNet = Network(std::stoi(options[INODES]),
-                                std::stoi(options[HNODES]),
-                                std::stoi(options[ONODES]),
-                                std::stoi(options[HLAYERS]));
+  Network myNeuralNet = Network();
+  switch(cmdType) {
+  case TRAIN :
+    myNeuralNet = Network(std::stoi(options[INODES]),
+                          std::stoi(options[HNODES]),
+                          std::stoi(options[ONODES]),
+                          std::stoi(options[HLAYERS]));
+    break;         
+  case TEST :
+    myNeuralNet = Network(options[WFILE]);
+    break;
+  }
 
   // Variables
   std::ifstream tFile(options[TFILE]);
@@ -52,7 +60,7 @@ int main(int argc, char* argv[]) {
     size_t index = val.rfind(',');
     int output = std::stoi(val.substr(index + 1, val.size() -1));
 
-    // Check training file matches up with parameters
+    // Check tFile matches up with parameters
     if (output < 0 || output > myNeuralNet.getNumOutputNodes() - 1) {
       std::cerr << " ERROR: Output value \"" << output << "\" is out of range."
         " Expected " << myNeuralNet.getNumOutputNodes() << " possible outputs.\n";
@@ -78,8 +86,18 @@ int main(int argc, char* argv[]) {
       exit(1);
     }
 
-    totalError = myNeuralNet.train(inputVec, outputVec);
+    switch(cmdType) {
+    case TRAIN :
+      totalError = myNeuralNet.train(inputVec, outputVec);
+      break;
+    case TEST :
+      std::cerr << "Test functionality not yet defined\n"; exit(1);
+      break;
+    }
   }
-  myNeuralNet.writeWeightFile(getWeightsDir(argv[0]));
+
+  if (cmdType == TRAIN) {
+    myNeuralNet.writeWeightFile(getWeightsDir(argv[0]));
+  }
   return 0;
 }

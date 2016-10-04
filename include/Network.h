@@ -21,6 +21,7 @@ private:
 public:
   Network(int in, int hid, int out, int lay);
   Network(std::string weightFile);
+  Network() {};
 
   float test();
   float train(std::vector<float> inputs, std::vector<float> targetOutputs);
