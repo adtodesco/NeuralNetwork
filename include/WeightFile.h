@@ -27,11 +27,11 @@ public:
   void setWeightFile(std::string weightFile);
   void writeWeightFile(std::string weightsDir, std::string baseName);
 
-  int getNumInputNodes();
-  int getNumHiddenNodes();
-  int getNumOutputNodes();
-  int getNumHiddenLayers();
-  std::vector< std::vector<float> > getWeights();
+  int getNumInputNodes() { return numInputNodes; }
+  int getNumHiddenNodes() { return numHiddenNodes; }
+  int getNumOutputNodes() { return numOutputNodes; }
+  int getNumHiddenLayers() { return numHiddenLayers; }
+  std::vector< std::vector<float> > getWeights() { return weights; }
 };
 
 #endif

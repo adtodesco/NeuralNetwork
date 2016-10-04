@@ -9,6 +9,7 @@ void Network::writeWeightFile(std::string weightsDir, std::string baseName) {
 
   // Build weights
   for (std::vector<Layer>::iterator it = layers.begin() + 1; it != layers.end(); ++it) {
+    weights.push_back(std::vector<float>());
     links = it->getLinks();
     for (std::vector< std::vector<Link> >::iterator node = links.begin(); node != links.end(); ++node) {
       for (std::vector<Link>::iterator prevNode = node->begin(); prevNode != node->end(); ++prevNode) {
@@ -91,7 +92,7 @@ void Network::initNetwork(std::vector< std::vector<float> > weights)
       layer = Layer(getNumHiddenNodes(), getNumInputNodes(), weights[l]);
     }
     else {
-     layer = Layer(getNumHiddenNodes(), getNumHiddenNodes(), weights[l]);
+      layer = Layer(getNumHiddenNodes(), getNumHiddenNodes(), weights[l]);
     }
     layers.push_back(layer);
     l++;

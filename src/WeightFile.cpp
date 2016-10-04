@@ -42,51 +42,13 @@ void WeightFile::writeWeightFile(std::string weightsDir, std::string baseName) {
   weightFile << "Hidden Nodes: " << getNumHiddenNodes() << std::endl;
   weightFile << "Output Nodes: " << getNumOutputNodes() << std::endl;
   weightFile << "Hidden Layers: " << getNumHiddenLayers() << std::endl; 
-  for (std::vector< std::vector<float> >::iterator it = weights.begin() + 1; it != weights.end(); ++it) {
-    for (std::vector<float>::iterator it = weights.begin() + 1; it != weights.end(); ++it) {
-      weightFile << weights << ',';
-      weightFile << std::endl;
+  for (std::vector< std::vector<float> >::iterator node = weights.begin(); node != weights.end(); ++node) {
+    for (std::vector<float>::iterator pnode = node->begin(); pnode != node->end(); ++pnode) {
+      weightFile << *pnode << ',';
     }
+    weightFile << std::endl;
   }
   weightFile.close();
-}
-
-// Confirm that the weightFile has been set
-void WeightFile::testWeightFile() {
-  if (weightFileSet == false) {
-    std::cerr << "  Error: Weight file not set\n";
-    exit(1);
-  }
-}
-
-// Return number of input nodes
-int WeightFile::getNumInputNodes() {
-  testWeightFile();
-  return numInputNodes;
-}
-
-// Return number of hidden nodes
-int WeightFile::getNumHiddenNodes() {
-  testWeightFile();
-  return numHiddenNodes;
-}
-
-// Return number of output nodes
-int WeightFile::getNumOutputNodes() {
-  testWeightFile();
-  return numOutputNodes;
-}
-
-// Return number of hidden layers
-int WeightFile::getNumHiddenLayers() {
-  testWeightFile();
-  return numHiddenLayers;
-}
-
-// Return weights
-std::vector< std::vector<float> > WeightFile::getWeights() {
-  testWeightFile();
-  return weights;
 }
 
 // Parses lines of weight file header to get metadata
@@ -127,7 +89,6 @@ void WeightFile::setWeightFile(std::string weightFile) {
   std::getline(wFile, val);
   numHiddenLayers = parseHeader(val);
 
-  std::vector< std::vector<float> > weights;
   while (std::getline(wFile, val)) {
     weights.push_back(parseWeights(val)); 
   }
@@ -135,13 +96,7 @@ void WeightFile::setWeightFile(std::string weightFile) {
 
 // Public constructor
 WeightFile::WeightFile(std::string weightFile) {
-  if (!weightFile.empty()) {
-    setWeightFile(weightFile);
-    weightFileSet = true;
-  }
-  else {
-    weightFileSet = false;
-  } 
+  setWeightFile(weightFile);
 }
 
 // Public constructor 
