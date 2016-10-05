@@ -21,6 +21,8 @@ $(EXEC): $(OBJECTS)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.$(SRC_EXT)
 	@mkdir -p $(BUILD_DIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+test:
+	@echo "Test!";
 
 clean:
 	@echo " Cleaning..."; 

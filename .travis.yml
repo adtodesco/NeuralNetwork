@@ -3,6 +3,5 @@ compiler: g++
 os:
   - linux
   - osx
-script: make
 notifications:
   email: false
