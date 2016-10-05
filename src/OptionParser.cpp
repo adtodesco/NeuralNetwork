@@ -17,6 +17,7 @@ void OptionParser::printHelp() {
   case TEST:
     std::cout << "  Usage: annet test <testing_file> <weight_file>\n\n"
       "  Options:\n"
+      "  -p, --print-results\t Print the test results.\n"
       "      --help\t\t Print this message\n\n"
       "  Example:\n"
       "  ./bin/annet test testing_set.csv weights.csv\n\n";
@@ -116,6 +117,9 @@ std::unordered_map<int, std::string> OptionParser::getTestOptions() {
     if (arg == "--help") {
       printHelp();
       exit(0);
+    }
+    else if (arg == "-p" || arg == "--print-results") {
+      options[PRNTRES] = "true";
     }
     else if (options.count(TFILE) == 0) {
       options[TFILE] = testFile(arg);

@@ -52,26 +52,41 @@ std::vector<float> Network::calculateInitialDeltinis(std::vector<float> actualOu
   return deltinis;
 }
 
-// Print prediction
-void printTestResults(std::vector<float> outputs, int actualOutput) {
-  std::cout << "Test results: \n";
-  int o = 0;
-  int prediction = -1;
+// Test prediction - returns 1 if correct, -1 if incorrect, 0 if no actualOutput given
+int Network::testResults(std::vector<float> outputs, int actualOutput) {
+  int node = 0, correct = 0, prediction = -1;
   float predictionVal = 0.0;
   for (std::vector<float>::iterator it = outputs.begin(); it != outputs.end(); ++it) {
-    std::cout << "  " << o << " = " << *it * 100 << std::endl;
     if (*it > predictionVal) {
       predictionVal = *it;
-      prediction = o;
+      prediction = node;
     }
-    o++;
+    node++;
   }
+  correct = (prediction == actualOutput) ? 1 : -1;
+  return correct;
+}
 
+// Print prediction - returns 1 if correct, -1 if incorrect, 0 if no actualOutput given
+int Network::testAndPrintResults(std::vector<float> outputs, int actualOutput) {
+  std::cout << "Test results: \n";
+  int node = 0, correct = 0, prediction = -1;
+  float predictionVal = 0.0;
+  for (std::vector<float>::iterator it = outputs.begin(); it != outputs.end(); ++it) {
+    std::cout << "  " << node << " = " << *it << std::endl;
+    if (*it > predictionVal) {
+      predictionVal = *it;
+      prediction = node;
+    }
+    node++;
+  }
   std::cout << "  Predicted: " << prediction;
   if (actualOutput >= 0) {
     std::cout << " Actual: " << actualOutput;
+    correct = (prediction == actualOutput) ? 1 : -1;
   }
   std::cout << std::endl;
+  return correct;
 }
 
 // Test network on a set of inputs and target outputs
@@ -80,7 +95,6 @@ std::vector<float> Network::test(std::vector<float> inputs, int output) {
   for (std::vector<Layer>::iterator it = layers.begin(); it != layers.end(); ++it) {
     inputs = it->feedForward(inputs);
   }
-  printTestResults(inputs, output);
   // Final inputs are actual outputs
   return inputs;
 }

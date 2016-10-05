@@ -24,5 +24,6 @@ int const ONODES = 2;
 int const HLAYERS = 3;
 int const TFILE = 4;
 int const WFILE = 5;
+int const PRNTRES = 6;
 
 #endif

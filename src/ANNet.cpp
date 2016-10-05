@@ -36,16 +36,14 @@ int main(int argc, char* argv[]) {
 
   // Initialize network
   Network myNeuralNet = Network();
-  switch(cmdType) {
-  case TRAIN :
+  if (cmdType == TRAIN) {
     myNeuralNet = Network(std::stoi(options[INODES]),
                           std::stoi(options[HNODES]),
                           std::stoi(options[ONODES]),
                           std::stoi(options[HLAYERS]));
-    break;         
-  case TEST :
+  }
+  else {
     myNeuralNet = Network(options[WFILE]);
-    break;
   }
 
   // Variables
@@ -53,6 +51,7 @@ int main(int argc, char* argv[]) {
   std::string val;
 
   float totalError = 1.0;
+  int testCorrect = 0, testTotal = 0, testTemp = 0;
   std::vector<float> outputVector;
   // Iterate through training file
   while (std::getline(tFile, val)) {
@@ -83,22 +82,34 @@ int main(int argc, char* argv[]) {
     // Check training file matches up with parameters
     if (inputCheck != myNeuralNet.getNumInputNodes()) {
       std::cerr << " ERROR: Expected " << myNeuralNet.getNumInputNodes() << " inputs per line."
-        " Training file has " << inputCheck << " inputs per line.\n";
+        " Training/testing file has " << inputCheck << " inputs per line.\n";
       exit(1);
     }
 
-    switch(cmdType) {
-    case TRAIN :
+    if (cmdType == TRAIN) {
       totalError = myNeuralNet.train(inputVec, outputVec);
-      break;
-    case TEST :
+    }
+    else {
       outputVector = myNeuralNet.test(inputVec, output);
-      break;
+      if (options[PRNTRES] == "true") {
+        testTemp = myNeuralNet.testAndPrintResults(outputVector, output);
+      }
+      else {
+        testTemp = myNeuralNet.testResults(outputVector, output);
+      }
+      if (testTemp == 1) {
+        testCorrect++;
+      }
+      testTotal++;
     }
   }
 
   if (cmdType == TRAIN) {
     myNeuralNet.writeWeightFile(getWeightsDir(argv[0]));
+  }
+  else {
+    std::cout << "Final test results:\n";
+    std::cout << "  Correctly predicted " << testCorrect << " out of " << testTotal << " tests.\n";
   }
   return 0;
 }

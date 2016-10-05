@@ -16,7 +16,7 @@ private:
   
   void initNetwork(std::vector< std::vector<float> > weights);
 
-  int numInputNodes, numOutputNodes, numHiddenNodes, numHiddenLayers;
+  int numInputNodes, numOutputNodes, numHiddenNodes, numHiddenLayers, testCorrect, testTotal;
   std::vector<Layer> layers;
 public:
   Network(int in, int hid, int out, int lay);
@@ -25,6 +25,9 @@ public:
 
   std::vector<float> test(std::vector<float> inputs, int output = -1);
   float train(std::vector<float> inputs, std::vector<float> targetOutputs);
+
+  int testResults(std::vector<float> outputs, int actualOutput);
+  int testAndPrintResults(std::vector<float> outputs, int actualOutput = -1);
   void writeWeightFile(std::string weightsDir, std::string baseName = "weights");
   
   int getNumInputNodes() { return numInputNodes; }
