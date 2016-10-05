@@ -16,7 +16,7 @@ private:
   
   void initNetwork(std::vector< std::vector<float> > weights);
 
-  int numInputNodes, numOutputNodes, numHiddenNodes, numHiddenLayers, testCorrect, testTotal;
+  int numInputNodes, numOutputNodes, numHiddenNodes, numHiddenLayers;
   std::vector<Layer> layers;
 public:
   Network(int in, int hid, int out, int lay);
