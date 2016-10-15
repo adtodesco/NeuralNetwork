@@ -9,7 +9,6 @@ SRC_EXT := cpp
 SOURCES := $(wildcard src/*.cpp)
 OBJECTS := $(patsubst $(SRC_DIR)/%,$(BUILD_DIR)/%,$(SOURCES:.$(SRC_EXT)=.o))
 CFLAGS := -g # -Wall
-#LIB := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
 INC := -I include
 
 all: $(EXEC)
@@ -22,10 +21,10 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.$(SRC_EXT)
 	@mkdir -p $(BUILD_DIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 test:
-	@echo "Test!";
-
+	@echo "Sine function test...";
+	@python ./tests/sine.py
 clean:
-	@echo " Cleaning..."; 
+	@echo " Cleaning..."
 	@echo " $(RM) -r $(BUILD_DIR) $(TARGET)"; $(RM) -r $(BUILD_DIR) $(TARGET)
 
 .PHONY: clean
