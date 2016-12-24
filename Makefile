@@ -22,7 +22,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.$(SRC_EXT)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 test:
 	@echo "Sine function test...";
-	@python ./tests/sine.py
+	@python ./tests/test.py
 clean:
 	@echo " Cleaning..."
 	@echo " $(RM) -r $(BUILD_DIR) $(TARGET)"; $(RM) -r $(BUILD_DIR) $(TARGET)

@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-float const BIASINPUT = 1.0;
+float const BIASINPUT = 0.5;
 float const LEARNINGRATE = 0.5;
 int const INITIALWEIGHTRANGE = 1;
 
@@ -25,5 +25,6 @@ int const HLAYERS = 3;
 int const TFILE = 4;
 int const WFILE = 5;
 int const PRNTRES = 6;
+int const WFILENAME = 7;
 
 #endif

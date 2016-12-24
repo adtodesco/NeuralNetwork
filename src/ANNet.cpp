@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     std::vector<float> inputVec;
     std::vector<float> outputVec(myNeuralNet.getNumOutputNodes(), 0.01);
     size_t index = val.rfind(',');
-    int output = std::stoi(val.substr(index + 1, val.size() -1));
+    int output = std::stoi(val.substr(index + 1, val.size() - 1));
 
     // Check tFile matches up with parameters
     if (output < 0 || output > myNeuralNet.getNumOutputNodes() - 1) {
@@ -105,7 +105,8 @@ int main(int argc, char* argv[]) {
   }
 
   if (cmdType == TRAIN) {
-    myNeuralNet.writeWeightFile(getWeightsDir(argv[0]));
+    
+    myNeuralNet.writeWeightFile(getWeightsDir(argv[0]), options[WFILENAME]);
   }
   else {
     std::cout << "Final test results:\n";

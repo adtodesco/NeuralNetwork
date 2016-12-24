@@ -6,11 +6,12 @@ void OptionParser::printHelp() {
   case TRAIN:
     std::cout << "  Usage: annet train <training_file> [options]\n\n"
       "  Options:\n"
-      "  -i, --input-nodes\t Set number of input nodes\n"
-      "  -h, --hidden-nodes\t Set number of hidden nodes\n"
-      "  -o, --output-nodes\t Set number of output nodes\n"
-      "  -l, --hidden-layers\t Set number of hidden layers\n"
-      "      --help\t\t Print this message\n\n"
+      "  -i, --input-nodes\t\t Set number of input nodes\n"
+      "  -h, --hidden-nodes\t\t Set number of hidden nodes\n"
+      "  -o, --output-nodes\t\t Set number of output nodes\n"
+      "  -l, --hidden-layers\t\t Set number of hidden layers\n"
+      "  -w, --weight-file-name\t Specify basename of weight file\n"
+      "      --help\t\t\t Print this message\n\n"
       "  Example:\n"
       "  ./bin/annet train training_set.csv -h 5 -l 1\n\n";
     break;
@@ -149,6 +150,7 @@ std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
   options[HNODES] = "0";
   options[ONODES] = "0";
   options[HLAYERS] = "0"; 
+  options[WFILENAME] = "weights";
 
   for (int i = 0; i < arguments.size(); i++) {
     std::string arg = arguments[i];
@@ -170,6 +172,10 @@ std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
     }
     else if (arg == "-l" || arg == "--hidden-layers") {
       options[HLAYERS] = testInt(arguments[i+1]);
+      i++;
+    }
+    else if (arg == "-w" || arg == "--weight-file-name") {
+      options[WFILENAME] = arguments[i+1];
       i++;
     }
     else if (options.count(TFILE) == 0) {
