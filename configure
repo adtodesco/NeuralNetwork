@@ -1,3 +1,6 @@
 #!/bin/bash
 
 mkdir -p ./bin
+mkdir -p ./files/train
+mkdir -p ./files/tests
+mkdir -p ./files/weights
