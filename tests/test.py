@@ -46,6 +46,3 @@ if __name__ == '__main__':
     trainNetwork(func)
     testNetwork(func) 
     removeTempFiles(func)
-
-  print "Script dir: " + os.path.dirname(os.path.abspath(__file__))
-  print "CWD:        " + os.getcwd()

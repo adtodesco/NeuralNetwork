@@ -32,4 +32,4 @@ bin/*
 # Build and libs and files
 build
 lib/*
-files/*
+files
