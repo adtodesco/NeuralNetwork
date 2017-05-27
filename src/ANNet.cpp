@@ -11,6 +11,10 @@ void printUsage() {
 
 }
 
+void debug(std::string debug, std::string log) {
+  if (debug == "true") { std::cout << "DEBUG: " << log << std::endl; }
+}
+
 // Returns the path to the default weights directory
 std::string getWeightsDir(char* argvZero) {
   std::string executablePath = realpath(argvZero, NULL);
@@ -20,7 +24,7 @@ std::string getWeightsDir(char* argvZero) {
 
 // Main method
 int main(int argc, char* argv[]) {
-
+  
   // Test for proper annet command
   if (argc < 2 || (strcmp(argv[1], "train") != 0 && strcmp(argv[1], "test") != 0 )) {
     std::cerr << "Command not recognized.\n";
@@ -34,27 +38,46 @@ int main(int argc, char* argv[]) {
   OptionParser parser = OptionParser(arguments, cmdType);
   std::unordered_map<int, std::string> options = parser.getOptions();
 
+  debug(options[DEBUG], "Debug logging is on.");
+
   // Initialize network
   Network myNeuralNet = Network();
   if (cmdType == TRAIN) {
+    debug(options[DEBUG], "Initializing Neural Network with input nodes = "
+            + options[INODES] + ", output nodes = " 
+            + options[ONODES] + ", hidden nodes = " 
+            + options[HNODES] + ", hidden layers = "
+            + options[HLAYERS]);
+
     myNeuralNet = Network(std::stoi(options[INODES]),
                           std::stoi(options[HNODES]),
                           std::stoi(options[ONODES]),
                           std::stoi(options[HLAYERS]));
   }
   else {
+    debug(options[DEBUG], "Initializing Neural Network with parameters weight file = "
+            + options[WFILE]);
+
     myNeuralNet = Network(options[WFILE]);
   }
+  
+  debug(options[DEBUG], "Neural Network initialized.");
 
   // Variables
   std::ifstream tFile(options[TFILE]);
   std::string val;
+
+  debug(options[DEBUG], "Reading " + options[TFILE] + "...");
 
   float totalError = 1.0;
   int testCorrect = 0, testTotal = 0, testTemp = 0;
   std::vector<float> outputVector;
   // Iterate through training file
   while (std::getline(tFile, val)) {
+
+    debug(options[DEBUG], "Reading new line \"" + val + "\".");
+    debug(options[DEBUG], "Creating output vector...");
+
     std::vector<float> inputVec;
     std::vector<float> outputVec(myNeuralNet.getNumOutputNodes(), 0.01);
     size_t index = val.rfind(',');
@@ -68,6 +91,8 @@ int main(int argc, char* argv[]) {
       exit(1);
     }
     outputVec[output] = 0.99;
+
+    debug(options[DEBUG], "Creating input vector...");
 
     int inputCheck = 0;
     // Set input and output vectors
@@ -87,9 +112,15 @@ int main(int argc, char* argv[]) {
     }
 
     if (cmdType == TRAIN) {
+      
+      debug(options[DEBUG], "Training Neural Network...");
+      
       totalError = myNeuralNet.train(inputVec, outputVec);
     }
     else {
+      
+      debug(options[DEBUG], "Testing Neural Network...");
+      
       outputVector = myNeuralNet.test(inputVec, output);
       if (options[PRNTRES] == "true") {
         testTemp = myNeuralNet.testAndPrintResults(outputVector, output);
@@ -104,8 +135,10 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  debug(options[DEBUG], "Finished reading " + options[TFILE] + '.');
+
   if (cmdType == TRAIN) {
-    
+    debug(options[DEBUG], "Writing weight file " + options[WFILENAME] + '.');  
     myNeuralNet.writeWeightFile(getWeightsDir(argv[0]), options[WFILENAME]);
   }
   else {

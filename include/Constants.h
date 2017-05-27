@@ -26,5 +26,6 @@ int const TFILE = 4;
 int const WFILE = 5;
 int const PRNTRES = 6;
 int const WFILENAME = 7;
+int const DEBUG = 8;
 
 #endif

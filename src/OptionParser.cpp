@@ -11,6 +11,7 @@ void OptionParser::printHelp() {
       "  -o, --output-nodes\t\t Set number of output nodes\n"
       "  -l, --hidden-layers\t\t Set number of hidden layers\n"
       "  -w, --weight-file-name\t Specify basename of weight file\n"
+      "  -d, --debug\t\t Turn on debug logging\n"
       "      --help\t\t\t Print this message\n\n"
       "  Example:\n"
       "  ./bin/annet train training_set.csv -h 5 -l 1\n\n";
@@ -19,6 +20,7 @@ void OptionParser::printHelp() {
     std::cout << "  Usage: annet test <testing_file> <weight_file>\n\n"
       "  Options:\n"
       "  -p, --print-results\t Print the test results.\n"
+      "  -d, --debug\t\t Turn on debug logging\n"
       "      --help\t\t Print this message\n\n"
       "  Example:\n"
       "  ./bin/annet test testing_set.csv weights.csv\n\n";
@@ -122,6 +124,9 @@ std::unordered_map<int, std::string> OptionParser::getTestOptions() {
     else if (arg == "-p" || arg == "--print-results") {
       options[PRNTRES] = "true";
     }
+    else if (arg == "-d" || arg == "--debug") {
+      options[DEBUG] = "true";
+    }
     else if (options.count(TFILE) == 0) {
       options[TFILE] = testFile(arg);
     }
@@ -177,6 +182,9 @@ std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
     else if (arg == "-w" || arg == "--weight-file-name") {
       options[WFILENAME] = arguments[i+1];
       i++;
+    }
+    else if (arg == "-d" || arg == "--debug") {
+      options[DEBUG] = "true";
     }
     else if (options.count(TFILE) == 0) {
       options[TFILE] = testFile(arg);
