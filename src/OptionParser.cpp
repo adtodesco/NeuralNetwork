@@ -11,7 +11,7 @@ void OptionParser::printHelp() {
       "  -o, --output-nodes\t\t Set number of output nodes\n"
       "  -l, --hidden-layers\t\t Set number of hidden layers\n"
       "  -w, --weight-file-name\t Specify basename of weight file\n"
-      "  -d, --debug\t\t Turn on debug logging\n"
+      "  -d, --debug\t\t\t Turn on debug logging\n"
       "      --help\t\t\t Print this message\n\n"
       "  Example:\n"
       "  ./bin/annet train training_set.csv -h 5 -l 1\n\n";
