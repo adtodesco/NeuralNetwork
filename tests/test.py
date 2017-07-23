@@ -3,10 +3,13 @@ import math
 from subprocess import call
 import os
 
+# Directory locations
 trainDir = "./files/train/"
 testDir = "./files/tests/"
 weightsDir = "./files/weights/"
-functions = [["sine", "1", "3"]]
+
+# Functions in format name, input_nodes, output_nodes, hidden_nodes, hidden_layers
+functions = [["sine", 1, 3, 5, 1]]
 
 def writeTempFiles(function):
   trainTarget = open(trainDir + function[0] + '.csv', 'w')
@@ -17,7 +20,7 @@ def writeTempFiles(function):
       temp = random.uniform(-1.57, 1.57)
       trainTarget.write("%s,%s\n" % (temp, int(round(math.sin(temp) + 1))))
       temp = random.uniform(-1.57, 1.57)
-      testTarget.write("%s,%s\n" % (temp, int(round(math.sin(temp) + 1))))
+      testTarget.write("%s,%s\n" % (temp, int(round(math.sin(temp + 1)))))
 
 def removeTempFiles(function):
   os.remove(trainDir + function[0] + '.csv')
@@ -29,10 +32,10 @@ def trainNetwork(function):
       "train",
       "./" + trainDir + function[0] + ".csv", 
       "-w", function[0], 
-      "-i", function[1],
-      "-o", function[2], 
-      "-h", "5",
-      "-l", "1"])
+      "-i", str(function[1]),
+      "-o", str(function[2]), 
+      "-h", str(function[3]),
+      "-l", str(function[4])])
 
 def testNetwork(function):
   call(["./bin/annet",
