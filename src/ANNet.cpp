@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
     if (output < 0 || output > myNeuralNet.getNumOutputNodes() - 1) {
       std::cerr << " ERROR: Output value \"" << output << "\" is out of range."
         " Expected " << myNeuralNet.getNumOutputNodes() << " possible outputs.\n";
-      std::cerr << " (NOTE: Outputs must be consecutive non-negative integers)\n";
+      std::cerr << "        Outputs must be consecutive non-negative integers\n";
       exit(1);
     }
     outputVec[output] = 0.99;
