@@ -30,8 +30,9 @@ def removeTempFiles(function):
 def trainNetwork(function):
   call(["./bin/annet",
       "train",
-      "./" + trainDir + function[0] + ".csv", 
-      "-w", function[0], 
+      trainDir + function[0] + ".csv", 
+      weightsDir + function[0] + "-weights.csv", 
+      "-d",
       "-i", str(function[1]),
       "-o", str(function[2]), 
       "-h", str(function[3]),
@@ -40,8 +41,8 @@ def trainNetwork(function):
 def testNetwork(function):
   call(["./bin/annet",
 	"test",
-	"./" + testDir + function[0] + ".csv",
-	weightsDir + function[0] + "-001.csv"])
+	testDir + function[0] + ".csv",
+	weightsDir + function[0] + "-weights.csv"])
 
 if __name__ == '__main__':
   for func in functions:

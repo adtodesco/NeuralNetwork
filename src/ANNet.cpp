@@ -42,8 +42,15 @@ int main(int argc, char* argv[]) {
 
   // Initialize network
   Network myNeuralNet = Network();
-  if (cmdType == TRAIN) {
-    debug(options[DEBUG], "Initializing Neural Network with input nodes = "
+  std::ifstream infile(options[WFILE]);
+  if (infile.good()) {
+    debug(options[DEBUG], "Initializing Neural Network with parameters weight file = "
+            + options[WFILE]);
+
+    myNeuralNet = Network(options[WFILE]);
+  }
+  else {
+   debug(options[DEBUG], "Initializing Neural Network with input nodes = "
             + options[INODES] + ", output nodes = " 
             + options[ONODES] + ", hidden nodes = " 
             + options[HNODES] + ", hidden layers = "
@@ -53,12 +60,6 @@ int main(int argc, char* argv[]) {
                           std::stoi(options[HNODES]),
                           std::stoi(options[ONODES]),
                           std::stoi(options[HLAYERS]));
-  }
-  else {
-    debug(options[DEBUG], "Initializing Neural Network with parameters weight file = "
-            + options[WFILE]);
-
-    myNeuralNet = Network(options[WFILE]);
   }
   
   debug(options[DEBUG], "Neural Network initialized.");
@@ -138,8 +139,8 @@ int main(int argc, char* argv[]) {
   debug(options[DEBUG], "Finished reading " + options[TFILE] + '.');
 
   if (cmdType == TRAIN) {
-    debug(options[DEBUG], "Writing weight file " + options[WFILENAME] + '.');  
-    myNeuralNet.writeWeightFile(getWeightsDir(argv[0]), options[WFILENAME]);
+    debug(options[DEBUG], "Writing weight file " + options[WFILE] + '.');  
+    myNeuralNet.writeWeightFile(getWeightsDir(argv[0]), options[WFILE]);
   }
   else {
     std::cout << "Final test results:\n";

@@ -4,26 +4,29 @@
 void OptionParser::printHelp() {
   switch (cmdtype) {
   case TRAIN:
-    std::cout << "  Usage: annet train <training_file> [options]\n\n"
+    std::cout << "  Usage: annet train <training_file> <weight_file> [options]\n\n"
       "  Options:\n"
-      "  -i, --input-nodes\t\t Set number of input nodes\n"
-      "  -h, --hidden-nodes\t\t Set number of hidden nodes\n"
-      "  -o, --output-nodes\t\t Set number of output nodes\n"
-      "  -l, --hidden-layers\t\t Set number of hidden layers\n"
-      "  -w, --weight-file-name\t Specify basename of weight file\n"
-      "  -d, --debug\t\t\t Turn on debug logging\n"
-      "      --help\t\t\t Print this message\n\n"
-      "  Example:\n"
-      "  ./bin/annet train training_set.csv -h 5 -l 1\n\n";
+      "  -i, --input-nodes\t Set number of input nodes\n"
+      "  -h, --hidden-nodes\t Set number of hidden nodes\n"
+      "  -o, --output-nodes\t Set number of output nodes\n"
+      "  -l, --hidden-layers\t Set number of hidden layers\n"
+      "  -d, --debug\t\t Turn on debug logging\n"
+      "      --help\t\t Print this message\n\n"
+      "  Examples:\n"
+      "  annet train training_set.csv weights.csv -i 5 -o 2 -h 5 -l 1 (new network)\n"
+      "  annet train training_set.csv weights.csv (existing network)\n\n"
+      "  Note that the node and layer arguments are only required when training a new\n"
+      "  network (no weight file). These options will be ignored in favor of the weight\n"
+      "  file metadata.\n\n";
     break;
   case TEST:
-    std::cout << "  Usage: annet test <testing_file> <weight_file>\n\n"
+    std::cout << "  Usage: annet test <testing_file> <weight_file> [options]\n\n"
       "  Options:\n"
       "  -p, --print-results\t Print the test results.\n"
       "  -d, --debug\t\t Turn on debug logging\n"
       "      --help\t\t Print this message\n\n"
       "  Example:\n"
-      "  ./bin/annet test testing_set.csv weights.csv\n\n";
+      "  annet test testing_set.csv weights.csv\n\n";
     break;
   }
 }
@@ -71,12 +74,9 @@ void OptionParser::error(int errorCode, std::string info) {
 }
 
 // Validate option is a valid file
-std::string OptionParser::testFile(std::string val) {
+bool OptionParser::fileExist(std::string val) {
   std::ifstream tFile(val);
-  if (!tFile.good()) {
-    error(ERRFILE, val);
-  }
-  return val;
+  return tFile.good();
 }
 
 // Validate option is an integer
@@ -115,6 +115,8 @@ void OptionParser::testNodes(std::unordered_map<int, std::string> options) {
 // Parse test options
 std::unordered_map<int, std::string> OptionParser::getTestOptions() {
   std::unordered_map<int, std::string> options;
+  
+  // Confirm miminum arguments of training and weight files
   for (int i = 0; i < arguments.size(); i++) {
     std::string arg = arguments[i];
     if (arg == "--help") {
@@ -128,22 +130,30 @@ std::unordered_map<int, std::string> OptionParser::getTestOptions() {
       options[DEBUG] = "true";
     }
     else if (options.count(TFILE) == 0) {
-      options[TFILE] = testFile(arg);
+      if (!fileExist(arg)) {
+          error(ERRFILE, arg);
+      }
+      options[TFILE] = arg; 
     }
     else if (options.count(WFILE) == 0) {
-      options[WFILE] = testFile(arg);
+      if (!fileExist(arg)) {
+          error(ERRFILE, arg);
+      }
+      options[WFILE] = arg;
     }
     else {
       error(ERROPT, arg);
     }
   }
 
+  // Confirm miminum arguments of testing and weight files
   if (options.count(TFILE) == 0) {
     error(ERRNOFILE, "Testing");
   } 
   if (options.count(WFILE) == 0) {
     error(ERRNOFILE, "Weight");
   }
+
   return options;
 }
 
@@ -155,8 +165,8 @@ std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
   options[HNODES] = "0";
   options[ONODES] = "0";
   options[HLAYERS] = "0"; 
-  options[WFILENAME] = "weights";
 
+  // Check arguments
   for (int i = 0; i < arguments.size(); i++) {
     std::string arg = arguments[i];
     if (arg == "--help") {
@@ -179,25 +189,37 @@ std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
       options[HLAYERS] = testInt(arguments[i+1]);
       i++;
     }
-    else if (arg == "-w" || arg == "--weight-file-name") {
-      options[WFILENAME] = arguments[i+1];
-      i++;
-    }
     else if (arg == "-d" || arg == "--debug") {
       options[DEBUG] = "true";
     }
     else if (options.count(TFILE) == 0) {
-      options[TFILE] = testFile(arg);
+      if (!fileExist(arg)) {
+          error(ERRFILE, arg);
+      }
+      options[TFILE] = arg; 
+    }
+    else if (options.count(WFILE) == 0) {
+      options[WFILE] = arg; 
     }
     else {
       error(ERROPT, arg);
     }
   }
 
+  // Confirm miminum arguments of training and weight files
   if (options.count(TFILE) == 0) {
    error(ERRNOFILE, "Training");
   } 
-  testNodes(options);
+  if (options.count(WFILE) == 0) {
+    error(ERRNOFILE, "Weight");
+  }
+
+  // Confirm node options are valid on intial training set 
+  // (empty weight file)
+  if (!fileExist(options[WFILE])) {
+    testNodes(options);
+  }
+
   return options;
 }
 
