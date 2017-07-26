@@ -1,7 +1,7 @@
 #include "Network.h"
 
 // Writes neural network weights to file
-void Network::writeWeightFile(std::string weightsDir, std::string baseName) {
+void Network::writeWeightFile(std::string weightFile) {
 
   std::vector< std::vector<float> > weights;
   int lay = 0;
@@ -25,7 +25,7 @@ void Network::writeWeightFile(std::string weightsDir, std::string baseName) {
                                getNumHiddenLayers(),
                                weights);
 
-  file.writeWeightFile(weightsDir, baseName);
+  file.writeWeightFile(weightFile);
 }
 
 // Calculate total error of the Network outputs w.r.t. the target outputs

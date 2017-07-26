@@ -28,7 +28,7 @@ public:
 
   int testResults(std::vector<float> outputs, int actualOutput);
   int testAndPrintResults(std::vector<float> outputs, int actualOutput = -1);
-  void writeWeightFile(std::string weightsDir, std::string baseName = "weights");
+  void writeWeightFile(std::string weightFile = "weights");
   
   int getNumInputNodes() { return numInputNodes; }
   int getNumOutputNodes() { return numOutputNodes; }

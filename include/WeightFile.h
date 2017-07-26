@@ -25,7 +25,7 @@ public:
   WeightFile(int in, int hid, int out, int lay, std::vector< std::vector<float> > wei); 
 
   void setWeightFile(std::string weightFile);
-  void writeWeightFile(std::string weightsDir, std::string baseName);
+  void writeWeightFile(std::string weightFile);
 
   int getNumInputNodes() { return numInputNodes; }
   int getNumHiddenNodes() { return numHiddenNodes; }

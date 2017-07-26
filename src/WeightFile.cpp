@@ -6,49 +6,39 @@ bool WeightFile::fileExists(std::string filename) {
   return f.good();
 }
 
-// Return 3-digit string from integer
-std::string WeightFile::intToString(int i) {
-  if (i < 10) {
-    return "00" + std::to_string(i);
-  } else if (i < 100) {
-    return "0" + std::to_string(i);
-  }
-  return std::to_string(i);
-}
-
 // Writes neural network weights to file
-void WeightFile::writeWeightFile(std::string weightsDir, std::string baseName) {
+void WeightFile::writeWeightFile(std::string weightFile) {
   // Check that filename is unique.  Append tag if already exists
   int identifier = 1;
-  std::string filename = weightsDir + '/' + baseName + '-' + intToString(identifier) + ".csv"; 
+  std::string filename = weightFile; 
 
   while (fileExists(filename) == true) {
     identifier++;
-    filename = weightsDir + '/' + baseName + '-' + intToString(identifier) + ".csv"; 
+    filename = weightFile + "_" + std::to_string(identifier);
   }
- 
- // Get time information for metadata
+
+  // Get time information for metadata
   time_t t = time(0);
   struct tm * now = localtime( & t);
   std::string ymd = std::to_string(now->tm_year + 1900) + '-' + std::to_string(now->tm_mon + 1) + '-' + std::to_string(now->tm_mday);
   std::string hms = std::to_string(now->tm_hour) + ':' + std::to_string(now->tm_min) + ':' + std::to_string(now->tm_sec);
 
   // Write weight file
-  std::ofstream weightFile;
-  weightFile.open(filename);
-  weightFile << "Neural Network Weight File: " << baseName + '-' + intToString(identifier) + ".csv" << std::endl;
-  weightFile << "Created: " << ymd << ' ' << hms << std::endl;
-  weightFile << "Input Nodes: " << getNumInputNodes() << std::endl;
-  weightFile << "Hidden Nodes: " << getNumHiddenNodes() << std::endl;
-  weightFile << "Output Nodes: " << getNumOutputNodes() << std::endl;
-  weightFile << "Hidden Layers: " << getNumHiddenLayers() << std::endl; 
+  std::ofstream weightFileStream;
+  weightFileStream.open(filename);
+  weightFileStream << "Neural Network Weight File: " << filename << std::endl;
+  weightFileStream << "Created: " << ymd << ' ' << hms << std::endl;
+  weightFileStream << "Input Nodes: " << getNumInputNodes() << std::endl;
+  weightFileStream << "Hidden Nodes: " << getNumHiddenNodes() << std::endl;
+  weightFileStream << "Output Nodes: " << getNumOutputNodes() << std::endl;
+  weightFileStream << "Hidden Layers: " << getNumHiddenLayers() << std::endl; 
   for (std::vector< std::vector<float> >::iterator node = weights.begin(); node != weights.end(); ++node) {
     for (std::vector<float>::iterator pnode = node->begin(); pnode != node->end(); ++pnode) {
-      weightFile << *pnode << ',';
+      weightFileStream << *pnode << ',';
     }
-    weightFile << std::endl;
+    weightFileStream << std::endl;
   }
-  weightFile.close();
+  weightFileStream.close();
 }
 
 // Parses lines of weight file header to get metadata

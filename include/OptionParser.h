@@ -15,7 +15,7 @@ private:
   void printHelp();
   void testNodes(std::unordered_map<int, std::string> options);
   std::string testInt(std::string val);
-  std::string testFile(std::string val);
+  bool fileExist(std::string val);
 
   std::unordered_map<int, std::string> getTestOptions();
   std::unordered_map<int, std::string> getTrainOptions();

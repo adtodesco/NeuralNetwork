@@ -20,18 +20,20 @@ def writeTempFiles(function):
       temp = random.uniform(-1.57, 1.57)
       trainTarget.write("%s,%s\n" % (temp, int(round(math.sin(temp) + 1))))
       temp = random.uniform(-1.57, 1.57)
-      testTarget.write("%s,%s\n" % (temp, int(round(math.sin(temp + 1)))))
+      testTarget.write("%s,%s\n" % (temp, int(round(math.sin(temp) + 1))))
 
 def removeTempFiles(function):
   os.remove(trainDir + function[0] + '.csv')
   os.remove(testDir + function[0] + '.csv')
-  os.remove(weightsDir + function[0] + "-001.csv")
+  os.remove(weightsDir + function[0] + '-weights.csv')
 
 def trainNetwork(function):
+  print "CALLING ./bin/annet train %s%s.csv %s%s-weights.csv -d -i %s -o %s -h %s -l %s" % (trainDir, function[0], weightsDir, function[0], function[1], function[2], function[3], function[4]) 
   call(["./bin/annet",
       "train",
-      "./" + trainDir + function[0] + ".csv", 
-      "-w", function[0], 
+      trainDir + function[0] + ".csv", 
+      weightsDir + function[0] + "-weights.csv", 
+      "-d",
       "-i", str(function[1]),
       "-o", str(function[2]), 
       "-h", str(function[3]),
@@ -40,12 +42,12 @@ def trainNetwork(function):
 def testNetwork(function):
   call(["./bin/annet",
 	"test",
-	"./" + testDir + function[0] + ".csv",
-	weightsDir + function[0] + "-001.csv"])
+	testDir + function[0] + ".csv",
+	weightsDir + function[0] + "-weights.csv"])
 
 if __name__ == '__main__':
   for func in functions:
     writeTempFiles(func)
     trainNetwork(func)
     testNetwork(func) 
-    removeTempFiles(func)
+    #removeTempFiles(func)
