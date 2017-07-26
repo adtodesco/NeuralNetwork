@@ -15,13 +15,6 @@ void debug(std::string debug, std::string log) {
   if (debug == "true") { std::cout << "DEBUG: " << log << std::endl; }
 }
 
-// Returns the path to the default weights directory
-std::string getWeightsDir(char* argvZero) {
-  std::string executablePath = realpath(argvZero, NULL);
-  size_t index = executablePath.rfind('/', executablePath.rfind('/') - 1);
-  return executablePath.substr(0, index) + "/files/weights";
-}
-
 // Main method
 int main(int argc, char* argv[]) {
   
@@ -140,7 +133,7 @@ int main(int argc, char* argv[]) {
 
   if (cmdType == TRAIN) {
     debug(options[DEBUG], "Writing weight file " + options[WFILE] + '.');  
-    myNeuralNet.writeWeightFile(getWeightsDir(argv[0]), options[WFILE]);
+    myNeuralNet.writeWeightFile(options[WFILE]);
   }
   else {
     std::cout << "Final test results:\n";
