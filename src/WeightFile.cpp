@@ -1,22 +1,8 @@
 #include "WeightFile.h"
 
-// Check for file existance
-bool WeightFile::fileExists(std::string filename) {
-  std::ifstream f(filename);
-  return f.good();
-}
-
 // Writes neural network weights to file
 void WeightFile::writeWeightFile(std::string weightFile) {
-  // Check that filename is unique.  Append tag if already exists
-  int identifier = 1;
-  std::string filename = weightFile; 
-
-  while (fileExists(filename) == true) {
-    identifier++;
-    filename = weightFile + "_" + std::to_string(identifier);
-  }
-
+  
   // Get time information for metadata
   time_t t = time(0);
   struct tm * now = localtime( & t);
@@ -25,8 +11,8 @@ void WeightFile::writeWeightFile(std::string weightFile) {
 
   // Write weight file
   std::ofstream weightFileStream;
-  weightFileStream.open(filename);
-  weightFileStream << "Neural Network Weight File: " << filename << std::endl;
+  weightFileStream.open(weightFile);
+  weightFileStream << "Neural Network Weight File: " << weightFile << std::endl;
   weightFileStream << "Created: " << ymd << ' ' << hms << std::endl;
   weightFileStream << "Input Nodes: " << getNumInputNodes() << std::endl;
   weightFileStream << "Hidden Nodes: " << getNumHiddenNodes() << std::endl;
