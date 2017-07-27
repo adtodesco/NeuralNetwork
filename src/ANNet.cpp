@@ -8,7 +8,8 @@
 
 // Print usage
 void printUsage() {
-
+    std::cout << "  Usage: annet {train|test} <training_file> <weight_file> [options]\n\n"
+      "  Run \"annet {train|test} --help\" for specific usage\n";
 }
 
 void debug(std::string debug, std::string log) {
@@ -17,11 +18,11 @@ void debug(std::string debug, std::string log) {
 
 // Main method
 int main(int argc, char* argv[]) {
-  
+
   // Test for proper annet command
   if (argc < 2 || (strcmp(argv[1], "train") != 0 && strcmp(argv[1], "test") != 0 )) {
-    std::cerr << "Command not recognized.\n";
-    //printUsage();
+    std::cerr << "  ERROR: Unrecognized command\n\n";
+    printUsage();
     exit(1);
   }
 
