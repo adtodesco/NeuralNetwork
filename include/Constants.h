@@ -6,14 +6,15 @@ float const LEARNINGRATE = 0.5;
 int const INITIALWEIGHTRANGE = 1;
 
 int const ERRFILE = 0;
-int const ERRDIR = 1;
-int const ERRNODE = 2;
-int const ERRLAYER = 3;
-int const ERRNOTINT = 4;
-int const ERROPT = 5;
-int const ERRNOFILE = 6;
-int const ERRNOHLAYERS = 7;
-int const ERRNOHNODES = 8;
+int const ERRNOFILE = 1;
+int const ERRDIR = 2;
+int const ERRNODE = 3;
+int const ERRLAYER = 4;
+int const ERRNOTINT = 5;
+int const ERROPT = 6;
+int const ERRNOARG = 7;
+int const ERRNOHLAYERS = 8;
+int const ERRNOHNODES = 9;
 
 int const TRAIN = 0;
 int const TEST = 1;
@@ -24,7 +25,8 @@ int const ONODES = 2;
 int const HLAYERS = 3;
 int const TFILE = 4;
 int const WFILE = 5;
-int const PRNTRES = 6;
-int const DEBUG = 7;
+int const WFILENAME = 6;
+int const PRNTRES = 7;
+int const DEBUG = 8;
 
 #endif

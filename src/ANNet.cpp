@@ -132,8 +132,9 @@ int main(int argc, char* argv[]) {
   debug(options[DEBUG], "Finished reading " + options[TFILE] + '.');
 
   if (cmdType == TRAIN) {
-    debug(options[DEBUG], "Writing weight file " + options[WFILE] + '.');  
-    myNeuralNet.writeWeightFile(options[WFILE]);
+    std::string weightFileName = (options.find(WFILENAME) == options.end()) ? options[WFILE] : options[WFILENAME];
+    debug(options[DEBUG], "Writing weight file " + weightFileName + '.');  
+    myNeuralNet.writeWeightFile(weightFileName);
   }
   else {
     std::cout << "Final test results:\n";
