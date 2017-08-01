@@ -15,6 +15,7 @@ int const ERROPT = 6;
 int const ERRNOARG = 7;
 int const ERRNOHLAYERS = 8;
 int const ERRNOHNODES = 9;
+int const ERREPOCHS = 10;
 
 int const TRAIN = 0;
 int const TEST = 1;
@@ -23,10 +24,11 @@ int const INODES = 0;
 int const HNODES = 1;
 int const ONODES = 2;
 int const HLAYERS = 3;
-int const TFILE = 4;
-int const WFILE = 5;
-int const WFILENAME = 6;
-int const PRNTRES = 7;
-int const DEBUG = 8;
+int const EPOCHS = 4;
+int const TFILE = 5;
+int const WFILE = 6;
+int const WFILENAME = 7;
+int const PRNTRES = 8;
+int const DEBUG = 9;
 
 #endif

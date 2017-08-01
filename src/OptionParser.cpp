@@ -10,6 +10,7 @@ void OptionParser::printHelp() {
       "  -h, --hidden-nodes\t\tSet number of hidden nodes\n"
       "  -o, --output-nodes\t\tSet number of output nodes\n"
       "  -l, --hidden-layers\t\tSet number of hidden layers\n"
+      "  -e, --epochs\t\t\tNumber of forward and backward passes of each training example\n"
       "  -w, --weight-file-name\tSet name of weight file (maintains original weight file)\n"
       "  -d, --debug\t\t\tTurn on debug logging\n"
       "      --help\t\t\tPrint this message\n\n"
@@ -70,6 +71,10 @@ void OptionParser::error(int errorCode, std::string info) {
   case ERRNOHNODES :
     std::cerr << "  ERROR: Hidden layers are set to one or greater"
                  " but hidden nodes are set to zero.\n";
+    break;
+  case ERREPOCHS :
+    std::cerr << "  ERROR: Invalid value " << info << " epochs.  Number of"
+                 " epochs must be at least one.\n";
     break;
   default: 
     std::cerr << "  ERROR: Unknown error.\n";
@@ -169,6 +174,7 @@ std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
   options[HNODES] = "0";
   options[ONODES] = "0";
   options[HLAYERS] = "0"; 
+  options[EPOCHS] = "1";
 
   // Check arguments
   for (int i = 0; i < arguments.size(); i++) {
@@ -191,6 +197,10 @@ std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
     }
     else if (arg == "-l" || arg == "--hidden-layers") {
       options[HLAYERS] = testInt(arguments[i+1]);
+      i++;
+    }
+    else if (arg == "-e" || arg == "--epochs") {
+      options[EPOCHS] = testInt(arguments[i+1]);
       i++;
     }
     else if (arg == "-w" || arg == "--weight-file-name") {
@@ -223,6 +233,11 @@ std::unordered_map<int, std::string> OptionParser::getTrainOptions() {
   } 
   if (options.count(WFILE) == 0) {
     error(ERRNOARG, "Weight");
+  }
+
+  // Confirm positive number of epochs
+  if (std::stoi(options[EPOCHS]) < 1) {
+    error(ERREPOCHS, options[EPOCHS]);
   }
 
   // Confirm node options are valid on intial training set 
