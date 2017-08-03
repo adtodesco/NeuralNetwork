@@ -90,7 +90,17 @@ int Network::testAndPrintResults(std::vector<float> outputs, int actualOutput) {
 }
 
 // Test network on a set of inputs and target outputs
-std::vector<float> Network::test(std::vector<float> inputs, int output) {
+int Network::test(std::vector<float> inputs, int output, bool print) {
+  // Loop forward
+  for (std::vector<Layer>::iterator it = layers.begin(); it != layers.end(); ++it) {
+    inputs = it->feedForward(inputs);
+  }
+  // Final inputs are actual outputs
+  return (print == true) ? testAndPrintResults(inputs, output) : testResults(inputs, output);
+}
+
+// Get prediction from network from a set of inputs
+std::vector<float> Network::predict(std::vector<float> inputs) {
   // Loop forward
   for (std::vector<Layer>::iterator it = layers.begin(); it != layers.end(); ++it) {
     inputs = it->feedForward(inputs);
