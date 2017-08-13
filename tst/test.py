@@ -32,7 +32,7 @@ def trainNetwork(function):
       "train",
       trainDir + function[0] + ".csv", 
       weightsDir + function[0] + "-weights.csv",
-      "-e", "9",
+      "-e", "10",
       "-i", str(function[1]),
       "-o", str(function[2]), 
       "-h", str(function[3]),
@@ -50,4 +50,4 @@ if __name__ == '__main__':
     writeTempFiles(func)
     trainNetwork(func)
     testNetwork(func) 
-    #removeTempFiles(func)
+    removeTempFiles(func)

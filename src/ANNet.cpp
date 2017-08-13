@@ -5,6 +5,7 @@
 #include "OptionParser.h"
 #include "Network.h"
 #include "Constants.h"
+#include "Log.h"
 
 // Debug printing - TODO: Replace with logging
 void debug(std::string debug, std::string log) {
@@ -83,7 +84,7 @@ std::vector< std::vector<float> > readTFile(Network myNeuralNet, std::string tFi
       temp.push_back(std::stof(val.substr(0, index)));
       val = val.substr(index + 1, val.size() - 1);
     }
-
+    
     tData.push_back(temp);
   }
 
@@ -95,7 +96,12 @@ std::vector< std::vector<float> > readTFile(Network myNeuralNet, std::string tFi
 // Main method
 int main(int argc, char* argv[]) {
   
-  // Basica argument checks
+  // FILELog::ReportingLevel() = FILELog::FromString("DEBUG1");
+  // FILE* pFile = fopen("application.log", "a");
+  // Output2FILE::Stream() = pFile;
+  // FILE_LOG(logDEBUG) << "Testing the log";
+
+  // Basic argument checks
   checkArgs(argc, argv);
 
   // Parse arguments
@@ -120,20 +126,20 @@ int main(int argc, char* argv[]) {
 
     float totalError = 1.0;
 
-    std::cout << "Epoch options: " << std::stoi(options[EPOCHS]) << std::endl;      
     for (int epoch = 0; epoch < std::stoi(options[EPOCHS]); epoch++) { 
-      std::cout << "Epoch: " << epoch << std::endl;      
-      for (std::vector< std::vector<float> >::iterator line = tData.begin(); line != tData.end(); ++line) {
 
+      for (std::vector< std::vector<float> >::iterator line = tData.begin(); line != tData.end(); ++line) {
+        
         int output = line->back();
-        line->pop_back();
-        std::vector<float> inputVec = *line; 
+        line->pop_back(); // Take output value off of vector
+        std::vector<float> inputVec = *line;
         std::vector<float> outputVec(myNeuralNet.getNumOutputNodes(), 0.01);
         outputVec[output] = 0.99;
         
         totalError = myNeuralNet.train(inputVec, outputVec);
+        line->push_back(output); // Put output value back on vector
       }
-     
+
     }
 
     std::string weightFileName = (options.find(WFILENAME) == options.end()) ? options[WFILE] : options[WFILENAME];
@@ -150,7 +156,7 @@ int main(int argc, char* argv[]) {
     for (std::vector< std::vector<float> >::iterator line = tData.begin(); line != tData.end(); ++line) {
       int result = 0;
       int output = line->back();
-      line->pop_back();
+      line->pop_back(); // Take output value off of vector
       std::vector<float> inputVec = *line; 
       
       if (options[PRNTRES] == "true") {
@@ -159,6 +165,8 @@ int main(int argc, char* argv[]) {
       else {
         result = myNeuralNet.test(inputVec, output);
       }
+      line->push_back(output); // Put output value back on vector
+
       if (result == 1) {
         testCorrect++;
       }
@@ -173,7 +181,7 @@ int main(int argc, char* argv[]) {
   return 0;
 }
 
-/*
+/* TODO: Move this block back into code...
     // Check tFile matches up with parameters
     if (output < 0 || output > myNeuralNet.getNumOutputNodes() - 1) {
       std::cerr << " ERROR: Output value \"" << output << "\" is out of range."

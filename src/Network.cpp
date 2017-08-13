@@ -115,7 +115,7 @@ float Network::train(std::vector<float> inputs, std::vector<float> targetOutputs
   for (std::vector<Layer>::iterator it = layers.begin(); it != layers.end(); ++it) {
     inputs = it->feedForward(inputs);
   }
-
+  
   // Final inputs are the actual outputs
   float totalError = calculateTotalError(inputs, targetOutputs);
   std::vector<float> deltinis = calculateInitialDeltinis(inputs, targetOutputs);
