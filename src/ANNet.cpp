@@ -5,19 +5,22 @@
 #include "OptionParser.h"
 #include "Network.h"
 #include "Constants.h"
+#include "Log.h"
+
+// Debug printing - TODO: Replace with logging
+void debug(std::string debug, std::string log) {
+  if (debug == "true") { std::cout << "DEBUG: " << log << std::endl; }
+}
 
 // Print usage
 void printUsage() {
     std::cout << "  Usage: annet {train|test} <training_file> <weight_file> [options]\n\n";
 }
 
-void debug(std::string debug, std::string log) {
-  if (debug == "true") { std::cout << "DEBUG: " << log << std::endl; }
-}
+// Basic argument checks
+void checkArgs(int argc, char* argv[]) {
 
-// Main method
-int main(int argc, char* argv[]) {
-
+  // Check for help flag
   if (argc > 1 && strstr(argv[1], "help")) {
     printUsage();
     exit(0);
@@ -30,6 +33,78 @@ int main(int argc, char* argv[]) {
     exit(1);
   }
 
+}
+
+// Init network
+Network initNetwork(std::unordered_map<int, std::string> options) {
+  Network myNeuralNet = Network();
+  std::ifstream infile(options[WFILE]);
+  if (infile.good()) {
+    //debug(options[DEBUG], "Initializing Neural Network with parameters weight file = "
+    //        + options[WFILE]);
+
+    myNeuralNet = Network(options[WFILE]);
+  }
+  else {
+   //debug(options[DEBUG], "Initializing Neural Network with input nodes = "
+   //         + options[INODES] + ", output nodes = " 
+   //         + options[ONODES] + ", hidden nodes = " 
+   //        + options[HNODES] + ", hidden layers = "
+   //         + options[HLAYERS]);
+
+    myNeuralNet = Network(std::stoi(options[INODES]),
+                          std::stoi(options[HNODES]),
+                          std::stoi(options[ONODES]),
+                          std::stoi(options[HLAYERS]));
+  }
+  
+  //debug(options[DEBUG], "Neural Network initialized.");
+
+  return myNeuralNet;
+}
+
+std::vector< std::vector<float> > readTFile(Network myNeuralNet, std::string tFileName) {
+
+  //debug(options[DEBUG], "Reading " + options[TFILE] + "...");
+
+  // Variables
+  std::ifstream tFile(tFileName);
+  std::string val;
+  std::vector< std::vector<float> > tData;
+
+  // Iterate through tFile and read into tData
+  while (std::getline(tFile, val)) {
+
+    //debug(options[DEBUG], "Reading new line \"" + val + "\".");
+    
+    std::vector<float> temp;
+    
+    while (val.size() > 0) {
+      size_t index = val.find(',');
+      temp.push_back(std::stof(val.substr(0, index)));
+      val = val.substr(index + 1, val.size() - 1);
+    }
+    
+    tData.push_back(temp);
+  }
+
+  //debug(options[DEBUG], "Finished reading " + options[TFILE] + '.');
+
+  return tData;
+}
+
+// Main method
+int main(int argc, char* argv[]) {
+  
+  // FILELog::ReportingLevel() = FILELog::FromString("DEBUG1");
+  // FILE* pFile = fopen("application.log", "a");
+  // Output2FILE::Stream() = pFile;
+  // FILE_LOG(logDEBUG) << "Testing the log";
+
+  // Basic argument checks
+  checkArgs(argc, argv);
+
+  // Parse arguments
   std::vector<std::string> arguments(argv + 2, argv + argc); 
   int cmdType = (strcmp(argv[1], "train") == 0) ? TRAIN : TEST;
 
@@ -39,49 +114,74 @@ int main(int argc, char* argv[]) {
   debug(options[DEBUG], "Debug logging is on.");
 
   // Initialize network
-  Network myNeuralNet = Network();
-  std::ifstream infile(options[WFILE]);
-  if (infile.good()) {
-    debug(options[DEBUG], "Initializing Neural Network with parameters weight file = "
-            + options[WFILE]);
+  Network myNeuralNet = initNetwork(options);
+ 
+  // Read tFile into tData vector 
+  std::vector< std::vector<float> > tData = readTFile(myNeuralNet, options[TFILE]);
 
-    myNeuralNet = Network(options[WFILE]);
+  // Train
+  if (cmdType == TRAIN) {
+    
+    debug(options[DEBUG], "Training Neural Network...");
+
+    float totalError = 1.0;
+
+    for (int epoch = 0; epoch < std::stoi(options[EPOCHS]); epoch++) { 
+
+      for (std::vector< std::vector<float> >::iterator line = tData.begin(); line != tData.end(); ++line) {
+        
+        int output = line->back();
+        line->pop_back(); // Take output value off of vector
+        std::vector<float> inputVec = *line;
+        std::vector<float> outputVec(myNeuralNet.getNumOutputNodes(), 0.01);
+        outputVec[output] = 0.99;
+        
+        totalError = myNeuralNet.train(inputVec, outputVec);
+        line->push_back(output); // Put output value back on vector
+      }
+
+    }
+
+    std::string weightFileName = (options.find(WFILENAME) == options.end()) ? options[WFILE] : options[WFILENAME];
+    debug(options[DEBUG], "Writing weight file " + weightFileName + '.');  
+    myNeuralNet.writeWeightFile(weightFileName);
   }
+  // Test
   else {
-   debug(options[DEBUG], "Initializing Neural Network with input nodes = "
-            + options[INODES] + ", output nodes = " 
-            + options[ONODES] + ", hidden nodes = " 
-            + options[HNODES] + ", hidden layers = "
-            + options[HLAYERS]);
+    
+    debug(options[DEBUG], "Testing Neural Network...");
 
-    myNeuralNet = Network(std::stoi(options[INODES]),
-                          std::stoi(options[HNODES]),
-                          std::stoi(options[ONODES]),
-                          std::stoi(options[HLAYERS]));
+    int testCorrect = 0, testTotal = 0;
+
+    for (std::vector< std::vector<float> >::iterator line = tData.begin(); line != tData.end(); ++line) {
+      int result = 0;
+      int output = line->back();
+      line->pop_back(); // Take output value off of vector
+      std::vector<float> inputVec = *line; 
+      
+      if (options[PRNTRES] == "true") {
+        result = myNeuralNet.test(inputVec, output);
+      }
+      else {
+        result = myNeuralNet.test(inputVec, output);
+      }
+      line->push_back(output); // Put output value back on vector
+
+      if (result == 1) {
+        testCorrect++;
+      }
+      
+      testTotal++;
+    }
+
+    std::cout << "Final test results:\n";
+    std::cout << "  Correctly predicted " << testCorrect << " out of " << testTotal << " tests.\n";
   }
-  
-  debug(options[DEBUG], "Neural Network initialized.");
 
-  // Variables
-  std::ifstream tFile(options[TFILE]);
-  std::string val;
+  return 0;
+}
 
-  debug(options[DEBUG], "Reading " + options[TFILE] + "...");
-
-  float totalError = 1.0;
-  int testCorrect = 0, testTotal = 0, testTemp = 0;
-  std::vector<float> outputVector;
-  // Iterate through training file
-  while (std::getline(tFile, val)) {
-
-    debug(options[DEBUG], "Reading new line \"" + val + "\".");
-    debug(options[DEBUG], "Creating output vector...");
-
-    std::vector<float> inputVec;
-    std::vector<float> outputVec(myNeuralNet.getNumOutputNodes(), 0.01);
-    size_t index = val.rfind(',');
-    int output = std::stoi(val.substr(index + 1, val.size() - 1));
-
+/* TODO: Move this block back into code...
     // Check tFile matches up with parameters
     if (output < 0 || output > myNeuralNet.getNumOutputNodes() - 1) {
       std::cerr << " ERROR: Output value \"" << output << "\" is out of range."
@@ -89,19 +189,10 @@ int main(int argc, char* argv[]) {
       std::cerr << "        Outputs must be consecutive non-negative integers\n";
       exit(1);
     }
-    outputVec[output] = 0.99;
 
     debug(options[DEBUG], "Creating input vector...");
+    debug(options[DEBUG], "Creating output vector...");
 
-    int inputCheck = 0;
-    // Set input and output vectors
-    val = val.substr(0, index + 1);
-    while (val.size() > 0) {
-      index = val.find(',');
-      inputVec.push_back(std::stof(val.substr(0, index)));
-      val = val.substr(index + 1, val.size() - 1);
-      inputCheck++;
-    }
 
     // Check training file matches up with parameters
     if (inputCheck != myNeuralNet.getNumInputNodes()) {
@@ -109,41 +200,4 @@ int main(int argc, char* argv[]) {
         " Training/testing file has " << inputCheck << " inputs per line.\n";
       exit(1);
     }
-
-    if (cmdType == TRAIN) {
-      
-      debug(options[DEBUG], "Training Neural Network...");
-      
-      totalError = myNeuralNet.train(inputVec, outputVec);
-    }
-    else {
-      
-      debug(options[DEBUG], "Testing Neural Network...");
-      
-      outputVector = myNeuralNet.test(inputVec, output);
-      if (options[PRNTRES] == "true") {
-        testTemp = myNeuralNet.testAndPrintResults(outputVector, output);
-      }
-      else {
-        testTemp = myNeuralNet.testResults(outputVector, output);
-      }
-      if (testTemp == 1) {
-        testCorrect++;
-      }
-      testTotal++;
-    }
-  }
-
-  debug(options[DEBUG], "Finished reading " + options[TFILE] + '.');
-
-  if (cmdType == TRAIN) {
-    std::string weightFileName = (options.find(WFILENAME) == options.end()) ? options[WFILE] : options[WFILENAME];
-    debug(options[DEBUG], "Writing weight file " + weightFileName + '.');  
-    myNeuralNet.writeWeightFile(weightFileName);
-  }
-  else {
-    std::cout << "Final test results:\n";
-    std::cout << "  Correctly predicted " << testCorrect << " out of " << testTotal << " tests.\n";
-  }
-  return 0;
-}
+*/

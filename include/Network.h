@@ -13,6 +13,8 @@ class Network
 private:
   float calculateTotalError(std::vector<float> actualOutputs, std::vector<float> targetOutputs);
   std::vector<float> calculateInitialDeltinis(std::vector<float> actualOutputs, std::vector<float> targetOutputs);
+  int testResults(std::vector<float> outputs, int actualOutput);
+  int testAndPrintResults(std::vector<float> outputs, int actualOutput);
   
   void initNetwork(std::vector< std::vector<float> > weights);
 
@@ -23,11 +25,10 @@ public:
   Network(std::string weightFile);
   Network() {};
 
-  std::vector<float> test(std::vector<float> inputs, int output = -1);
   float train(std::vector<float> inputs, std::vector<float> targetOutputs);
+  int test(std::vector<float> inputs, int output, bool print = false);
+  std::vector<float> predict(std::vector<float> inputs);
 
-  int testResults(std::vector<float> outputs, int actualOutput);
-  int testAndPrintResults(std::vector<float> outputs, int actualOutput = -1);
   void writeWeightFile(std::string weightFile = "weights");
   
   int getNumInputNodes() { return numInputNodes; }
